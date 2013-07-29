@@ -1,0 +1,17 @@
+
+<template name="backHome">
+	<button class="backHome">Home</button>
+</template>
+
+<template name="home">
+	<h3>HOME</h3>
+
+	{{#each pageList}}
+		{{> pageButton}}
+	{{/each}}
+</template>
+
+<template name="pageButton">
+	<button id="{{pageName}}" class="pageButton">{{pageName}}</button>
+</template>
+

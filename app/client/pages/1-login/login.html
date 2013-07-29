@@ -1,0 +1,14 @@
+
+<template name="login">
+
+<div class="entry">
+	<h3>LOGIN</h3>
+
+	{{#if currentUser}}
+		{{> backHome}}
+		<input id="btnLogout" type="button" value="Logout"></input>
+	{{else}}
+		{{loginButtons}}
+	{{/if}}
+</div>
+</template>
