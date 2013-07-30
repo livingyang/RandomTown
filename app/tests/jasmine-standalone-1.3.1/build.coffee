@@ -13,7 +13,7 @@ buildFile = (filePath, distDir) ->
 
 # build src file
 srcFiles = [
-	"../../lib/LibClass.coffee"
+	"../../lib/MazeGenerator.coffee"
 ]
 
 srcFiles.forEach (srcFile) ->
