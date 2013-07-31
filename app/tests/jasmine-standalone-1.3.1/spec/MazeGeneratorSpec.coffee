@@ -46,13 +46,9 @@ describe "MazeGeneratorSpec", ->
 	it "测试 Grid setter, getter", ->
 		generator = new MazeGenerator(2, 3)
 		expect(generator.getGrid 1, 1).toBe(MazeGenerator.InitGrid)
-		generator.setGrid 2, 1, 1
+		generator.setGrid 1, 1, 2
 		expect(generator.getGrid 1, 1).toBe(2)
 		expect(generator.getGrid -1, 1).toBe(MazeGenerator.InvalidGrid)
-		generator.print()
-
-		console.log generator.getAroundIndexes(1, 1)
-		console.log generator.getAroundIndexes(0, 0)
 
 	it "获取周边格子索引", ->
 		generator = new MazeGenerator(3, 4, [0, 0, 0, 0,
@@ -101,3 +97,14 @@ describe "MazeGeneratorSpec", ->
 		expect(connectGridArray[0].length).toBe(1)
 		expect(connectGridArray[1].length).toBe(7)
 		expect(connectGridArray[2].length).toBe(1)
+
+	it "设置障碍标志", ->
+		generator = new MazeGenerator(2, 3, [0, 0, 0,
+											 0, 0, 0])
+
+		generator.createBlocks 0
+		expect(generator.grids).toEqual([0, 0, 0,
+										 0, 0, 0])
+		generator.createBlocks 1
+		expect(generator.grids).toEqual([-2, -2, -2,
+										 -2, -2, -2])

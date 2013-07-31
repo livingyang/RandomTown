@@ -34,7 +34,7 @@ class MazeGenerator
 	getGrid: (row, col) ->
 		if @isValidIndex(row, col) then @grids[@getGridIndex(row, col)] else MazeGenerator.InvalidGrid
 
-	setGrid: (value, row, col) ->
+	setGrid: (row, col, value) ->
 		@grids[@getGridIndex(row, col)] = value if @isValidIndex row, col
 
 	getAroundIndexes: (row, col) ->
@@ -49,11 +49,11 @@ class MazeGenerator
 			while growIndexes.length > 0
 				newGrowIndexes = []
 				for index in growIndexes
-					@setGrid value, index[0], index[1]
+					@setGrid index[0], index[1], value
 					(newGrowIndexes.push aroundIndex for aroundIndex in @getAroundIndexes(index[0], index[1]) when @getGrid(aroundIndex[0], aroundIndex[1]) is MazeGenerator.InitGrid)
 				growIndexes = newGrowIndexes
 		
-		console.log "mark done!"
+		# console.log "mark done!"
 
 	getConnectGridArray: () ->
 		for grid in @grids
@@ -71,6 +71,9 @@ class MazeGenerator
 		
 		(([@getRowColFromGridIndex(index)[0], @getRowColFromGridIndex(index)[1]] for grid, index in @grids when grid is markValue) for markValue in [MazeGenerator.MinMarkValue...startMarkValue])
 
+	createBlocks: (blockPercent) ->
+		@grids[i] = MazeGenerator.BlockGrid for i in [0...@grids.length] when @grids[i] is MazeGenerator.InitGrid and (0 < Math.random() < blockPercent)
+		
 		
 
 MazeGenerator.InitGrid = 0
