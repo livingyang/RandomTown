@@ -3,11 +3,14 @@ testAdd = (num1, num2) -> num1 + num2
 @testAdd = testAdd
 
 class MazeGenerator
-	constructor: (rows, cols) ->
+	constructor: (rows, cols, grids) ->
 		@rows = if Number(rows) > 0 then Number(rows) else 0
 		@cols = if Number(cols) > 0 then Number(cols) else 0
 
-		@grids = (MazeGenerator.InitGrid for i in [0...rows * cols])
+
+		@grids = if grids instanceof Array and grids.length is rows * cols
+		then (i for i in grids)
+		else (MazeGenerator.InitGrid for i in [0...rows * cols])
 	
 	print: ->
 		result = ""
@@ -35,10 +38,43 @@ class MazeGenerator
 		@grids[@getGridIndex(row, col)] = value if @isValidIndex row, col
 
 	getAroundIndexes: (row, col) ->
-		gridOffsetArray = [[-1, 0], [1, 0], [0, -1], [0, 1]]
-		([row + gridOffset[0], col + gridOffset[1]] for gridOffset in gridOffsetArray when @isValidIndex row + gridOffset[0], col + gridOffset[1])
+		if @isValidIndex row, col
+		then ([row + gridOffset[0], col + gridOffset[1]] for gridOffset in [[-1, 0], [1, 0], [0, -1], [0, 1]] when @isValidIndex row + gridOffset[0], col + gridOffset[1])
+		else []
+
+	markConnectGrid: (row, col, value) ->
+		if @getGrid(row, col) is MazeGenerator.InitGrid
+
+			growIndexes = [[row, col]]
+			while growIndexes.length > 0
+				newGrowIndexes = []
+				for index in growIndexes
+					@setGrid value, index[0], index[1]
+					(newGrowIndexes.push aroundIndex for aroundIndex in @getAroundIndexes(index[0], index[1]) when @getGrid(aroundIndex[0], aroundIndex[1]) is MazeGenerator.InitGrid)
+				growIndexes = newGrowIndexes
+		
+		console.log "mark done!"
+
+	getConnectGridArray: () ->
+		for gird in @grids
+			if grid isnt MazeGenerator.InitGrid or grid isnt MazeGenerator.BlockGrid
+				console.log "getConnectGridArray grid info invalid"
+				return []
+
+		startMarkValue = MazeGenerator.MinMarkValue
+		for grid, index in @grids
+			if grid is MazeGenerator.InitGrid
+				gridRowColIndex = @getRowColFromGridIndex index
+				@markConnectGrid gridRowColIndex[0], gridRowColIndex[1], startMarkValue
+				startMarkValue++ 
+		
+		
+		# tempGrids = (grid for grid in @grids)
+
+		
 
 MazeGenerator.InitGrid = 0
+MazeGenerator.MinMarkValue = 1
 MazeGenerator.InvalidGrid = -1
 MazeGenerator.BlockGrid = -2
 

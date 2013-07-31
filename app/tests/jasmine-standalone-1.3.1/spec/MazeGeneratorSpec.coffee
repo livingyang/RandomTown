@@ -1,6 +1,15 @@
+expectMazeIndex = (mazeGenerator, rowColArray1, rowColArray2) ->
+    expect(mazeGenerator).toEqual(jasmine.any(MazeGenerator))
+
+    gridIndexArray1 = (mazeGenerator.getGridIndex(rowCol[0], rowCol[1]) for rowCol in rowColArray1)
+    for rowCol in rowColArray2
+    	expect(gridIndexArray1).toContain(mazeGenerator.getGridIndex(rowCol[0], rowCol[1]))
+    
+
 describe "MazeGeneratorSpec", ->
 	it "测试常量", ->
 		expect(MazeGenerator.InitGrid).toBe(0)
+		expect(MazeGenerator.MinMarkValue).toBe(1)
 		expect(MazeGenerator.InvalidGrid).toBe(-1)
 		expect(MazeGenerator.BlockGrid).toBe(-2)
 
@@ -11,7 +20,12 @@ describe "MazeGeneratorSpec", ->
 		expect(generator.grids.length).toBe(2 * 3)
 		for grid in generator.grids
 			expect(grid).toBe(MazeGenerator.InitGrid)
-	
+
+		generator = new MazeGenerator(2, 3, [1, 0, 0, 0, 0, 2])
+		expect(generator.grids[0]).toBe(1)
+		expect(generator.grids[1]).toBe(0)
+		expect(generator.grids[5]).toBe(2)
+		
 	it "测试 Grid 索引", ->
 		generator = new MazeGenerator(2, 3)
 		expect(generator.isValidIndex 0, 0).toBe(true)
@@ -46,3 +60,39 @@ describe "MazeGeneratorSpec", ->
 
 		console.log generator.getAroundIndexes(1, 1)
 		console.log generator.getAroundIndexes(0, 0)
+
+	it "获取周边格子索引", ->
+		generator = new MazeGenerator(3, 4, [0, 0, 0, 0,
+											 0, 0, 0, 0,
+											 0, 0, 0, 0])
+
+		expect(generator.getAroundIndexes(1, 1).length).toBe(4)
+		expect(generator.getAroundIndexes(0, 4).length).toBe(0)
+
+	it "标记联通格子", ->
+		generator = new MazeGenerator(2, 3, [0, 1, 0,
+											 1, 0, 0])
+		generator.markConnectGrid 0, 0, 3
+		expect(generator.grids).toEqual([3, 1, 0,
+										 1, 0, 0])
+
+		generator.markConnectGrid 1, 1, 6
+		expect(generator.grids).toEqual([3, 1, 6,
+										 1, 6, 6])
+
+	it "获取联通格子数组", ->
+		generator = new MazeGenerator(2, 3, [0, -1, 0,
+											 -1, 0, 0])
+
+		connectGridArray = generator.getConnectGridArray()
+
+		expect(generator.grids).toEqual([1, -1, 2,
+										 -1, 2, 2])
+		# expect(connectGridArray.length).toBe(2)
+
+		# if connectGridArray[0].length is 1
+		# 	expect(connectGridArray[1].length).toBe(3)
+		# else
+		# 	expect(connectGridArray[0].length).toBe(3)
+		# 	expect(connectGridArray[1].length).toBe(1)
+		
