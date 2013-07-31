@@ -56,8 +56,8 @@ class MazeGenerator
 		console.log "mark done!"
 
 	getConnectGridArray: () ->
-		for gird in @grids
-			if grid isnt MazeGenerator.InitGrid or grid isnt MazeGenerator.BlockGrid
+		for grid in @grids
+			if grid isnt MazeGenerator.InitGrid and grid isnt MazeGenerator.BlockGrid
 				console.log "getConnectGridArray grid info invalid"
 				return []
 
@@ -69,7 +69,7 @@ class MazeGenerator
 				startMarkValue++ 
 		
 		
-		# tempGrids = (grid for grid in @grids)
+		(([@getRowColFromGridIndex(index)[0], @getRowColFromGridIndex(index)[1]] for grid, index in @grids when grid is markValue) for markValue in [MazeGenerator.MinMarkValue...startMarkValue])
 
 		
 

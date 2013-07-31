@@ -1,10 +1,3 @@
-expectMazeIndex = (mazeGenerator, rowColArray1, rowColArray2) ->
-    expect(mazeGenerator).toEqual(jasmine.any(MazeGenerator))
-
-    gridIndexArray1 = (mazeGenerator.getGridIndex(rowCol[0], rowCol[1]) for rowCol in rowColArray1)
-    for rowCol in rowColArray2
-    	expect(gridIndexArray1).toContain(mazeGenerator.getGridIndex(rowCol[0], rowCol[1]))
-    
 
 describe "MazeGeneratorSpec", ->
 	it "测试常量", ->
@@ -81,18 +74,30 @@ describe "MazeGeneratorSpec", ->
 										 1, 6, 6])
 
 	it "获取联通格子数组", ->
-		generator = new MazeGenerator(2, 3, [0, -1, 0,
-											 -1, 0, 0])
+		generator = new MazeGenerator(2, 3, [0, -2, 0,
+											 -2, 0, 0])
 
 		connectGridArray = generator.getConnectGridArray()
 
-		expect(generator.grids).toEqual([1, -1, 2,
-										 -1, 2, 2])
-		# expect(connectGridArray.length).toBe(2)
+		expect(generator.grids).toEqual([1, -2, 2,
+										 -2, 2, 2])
 
-		# if connectGridArray[0].length is 1
-		# 	expect(connectGridArray[1].length).toBe(3)
-		# else
-		# 	expect(connectGridArray[0].length).toBe(3)
-		# 	expect(connectGridArray[1].length).toBe(1)
-		
+		expect(connectGridArray.length).toBe(2)
+		expect(connectGridArray[0].length).toBe(1)
+		expect(connectGridArray[1].length).toBe(3)
+	
+	it "稍微复杂点的获取联通格子数组", ->
+		generator = new MazeGenerator(3, 4, [0, -2, 0, 0,
+											 -2, 0, 0, 0,
+											 0, -2, 0, 0])
+
+		connectGridArray = generator.getConnectGridArray()
+
+		expect(generator.grids).toEqual([1, -2, 2, 2,
+										 -2, 2, 2, 2,
+										 3, -2, 2, 2])
+
+		expect(connectGridArray.length).toBe(3)
+		expect(connectGridArray[0].length).toBe(1)
+		expect(connectGridArray[1].length).toBe(7)
+		expect(connectGridArray[2].length).toBe(1)
