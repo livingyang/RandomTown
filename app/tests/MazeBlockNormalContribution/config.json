@@ -1,5 +1,5 @@
 {
-	"Role_Count": 1000,
-	"Maze_Size": [10, 10],
+	"Role_Count": 10000,
+	"Maze_Size": [15, 10],
 	"Block_Percent": 0.4 
 }		
