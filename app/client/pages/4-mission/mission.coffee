@@ -66,6 +66,11 @@ playMissionResult = (elParent, generator) ->
 	collie.Renderer.addLayer layer
 	collie.Renderer.load elParent
 	collie.Renderer.start()
+	collie.Renderer.resize layer.get("width"), layer.get("height"), true
+
+	console.log layer
+	console.log layer.get "height"
+	console.log layer.get "x"
 
 Template.mission.destroyed = ->
 	stopPlayMissionResult()
