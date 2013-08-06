@@ -1,7 +1,3 @@
-testAdd = (num1, num2) -> num1 + num2
-
-@testAdd = testAdd
-
 class MazeGenerator
 	constructor: (rows, cols, grids) ->
 		@rows = if Number(rows) > 0 then Number(rows) else 0

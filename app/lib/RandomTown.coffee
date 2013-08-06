@@ -20,19 +20,31 @@ class RandomTown
 	getHeroLocation: ->
 		@heroLocation
 
+	getFloor: (floor) ->
+		@floors[floor]
+
 	getCurFloor: ->
-		@floors[@heroFloor]
+		@getFloor(@heroFloor)
 
 	getFloorGrid: (floor, row, col) ->
 		floor[row][col]
+
+	searchGridLocation: (floor, searchGrid) ->
+		floor ?= []
+		for row, cols of floor
+			for col, grid of cols
+				return [Number(row), Number(col)] if grid is searchGrid
+		null
 
 	moveHandle: (row, col) ->
 		switch @getFloorGrid @getCurFloor(), row, col
 			when RandomTown.Road
 				@heroLocation = [row, col]
 			when RandomTown.Exit
-				if @heroFloor + 1 < @floors.length
-					@heroFloor += 1
+				nextFloor = @heroFloor + 1
+				if nextFloor < @floors.length and @searchGridLocation(@getFloor(nextFloor), RandomTown.Entry)?
+					@heroFloor = nextFloor
+					@heroLocation = @searchGridLocation @getCurFloor(), RandomTown.Entry
 
 	moveUp: ->
 		if @getHeroLocation()[0] > 0
