@@ -45,6 +45,15 @@ class RandomTown
 				if nextFloor < @floors.length and @searchGridLocation(@getFloor(nextFloor), RandomTown.Entry)?
 					@heroFloor = nextFloor
 					@heroLocation = @searchGridLocation @getCurFloor(), RandomTown.Entry
+				else
+					@heroLocation = [row, col]
+			when RandomTown.Entry
+				prevFloor = @heroFloor - 1
+				if prevFloor >= 0 and @searchGridLocation(@getFloor(prevFloor), RandomTown.Exit)?
+					@heroFloor = prevFloor
+					@heroLocation = @searchGridLocation @getCurFloor(), RandomTown.Exit
+				else
+					@heroLocation = [row, col]
 
 	moveUp: ->
 		if @getHeroLocation()[0] > 0

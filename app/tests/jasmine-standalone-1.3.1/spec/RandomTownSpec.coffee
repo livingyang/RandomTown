@@ -94,3 +94,11 @@ describe "RandomTownSpec", ->
 		town.moveRight()
 		expect(town.getHeroFloor()).toBe(1)
 		expect(town.getHeroLocation()).toEqual([1, 2])
+
+		town.moveLeft()
+		expect(town.getHeroFloor()).toBe(1)
+		expect(town.getHeroLocation()).toEqual([1, 1])
+
+		town.moveRight()
+		expect(town.getHeroFloor()).toBe(0)
+		expect(town.getHeroLocation()).toEqual([1, 2])
