@@ -1,3 +1,9 @@
+###
+floors = [], object = floor, indexName = floorIndex
+floor = [], object = grid, indexName = [row, col]
+grid = {ground: xxx, object: xxx}
+###
+
 class RandomTown
 	constructor: (options) ->
 		options ?= {}
@@ -6,13 +12,10 @@ class RandomTown
 	startWithHero: (hero) ->
 		@hero = hero ? {}
 		@heroFloor = 0
-		curFloors = @getCurFloor()
 
-		console.log @floors
-
-		for row, cols of curFloors
+		for row, cols of @getCurFloor()
 			for col, grid of cols
-				@heroLocation = [Number(row), Number(col)] if grid is RandomTown.Entry
+				@heroLocation = [Number(row), Number(col)] if grid.ground is RandomTown.Entry
 		
 	getHeroFloor: ->
 		@heroFloor
@@ -33,11 +36,11 @@ class RandomTown
 		floor ?= []
 		for row, cols of floor
 			for col, grid of cols
-				return [Number(row), Number(col)] if grid is searchGrid
+				return [Number(row), Number(col)] if grid.ground is searchGrid
 		null
 
 	moveHandle: (row, col) ->
-		switch @getFloorGrid @getCurFloor(), row, col
+		switch @getFloorGrid(@getCurFloor(), row, col).ground
 			when RandomTown.Road
 				@heroLocation = [row, col]
 			when RandomTown.Exit

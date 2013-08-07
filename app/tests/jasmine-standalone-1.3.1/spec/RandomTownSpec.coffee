@@ -12,34 +12,34 @@ describe "RandomTownSpec", ->
 	it "测试楼层设置", ->
 		floors = []
 		floors.push [
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
-			[RandomTown.Wall, RandomTown.Entry, RandomTown.Exit]
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Entry}, {ground: RandomTown.Exit}]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 		]
 		floors.push [
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
-			[RandomTown.Entry, RandomTown.Exit, RandomTown.Wall]
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Entry}, {ground: RandomTown.Exit}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 		]
 		town = new RandomTown
 			floors : floors
 
 		expect(town.floors.length).toBe(2)
-		expect(town.floors[0][0][0]).toBe(RandomTown.Wall)
-		expect(town.floors[0][1][1]).toBe(RandomTown.Entry)
-		expect(town.floors[0][1][2]).toBe(RandomTown.Exit)
+		expect(town.floors[0][0][0].ground).toBe(RandomTown.Wall)
+		expect(town.floors[0][1][1].ground).toBe(RandomTown.Entry)
+		expect(town.floors[0][1][2].ground).toBe(RandomTown.Exit)
 
 	it "初始化探索英雄", ->
 		floors = []
 		floors.push [
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
-			[RandomTown.Entry, RandomTown.Road, RandomTown.Exit]
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Entry}, {ground: RandomTown.Road}, {ground: RandomTown.Exit}]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 		]
 		town = new RandomTown
 			floors : floors
 		
-		expect(town.floors[0][1][0]).toBe(RandomTown.Entry)
+		expect(town.floors[0][1][0].ground).toBe(RandomTown.Entry)
 		expect(town.getHeroFloor()?).toBe(false)
 		expect(town.getHeroLocation()?).toBe(false)
 		
@@ -60,14 +60,14 @@ describe "RandomTownSpec", ->
 	it "使用英雄进行探索", ->
 		floors = []
 		floors.push [
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
-			[RandomTown.Entry, RandomTown.Road, RandomTown.Exit]
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Entry}, {ground: RandomTown.Road}, {ground: RandomTown.Exit}]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 		]
 		floors.push [
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
-			[RandomTown.Wall, RandomTown.Exit, RandomTown.Entry]
-			[RandomTown.Wall, RandomTown.Wall, RandomTown.Wall]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Exit}, {ground: RandomTown.Entry}]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 		]
 		town = new RandomTown
 			floors : floors
