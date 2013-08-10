@@ -118,14 +118,14 @@ describe "RandomTownSpec", ->
 		expect(town.heroFloorIndex).toBe(0)
 		expect(town.heroLocation).toEqual([1, 1])
 
-	it "测试crystal对象", ->
+	it "测试plus对象", ->
 		floors = []
 		floors.push [
 			[{ground: -1}, {ground: 0}]
 			[{ground: -1}, {ground: 0}]
 		]
 		floors[0][1][1].object =
-			type: "crystal"
+			type: "plus"
 			attack: 2
 			exp: 10
 			errorProperty: 10

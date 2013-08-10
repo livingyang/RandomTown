@@ -55,14 +55,14 @@ RandomTown.ObjectHandle["hole"] =
 		town.heroFloorIndex = object.floorIndex
 		town.heroLocation = object.location
 
-RandomTown.ObjectHandle["crystal"] =
+RandomTown.ObjectHandle["plus"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
 		if object.isUsed is true
 			town.heroLocation = objectLocation
 		else
 			object.isUsed = true
 			for property, value of object
-				town.hero[property] += value if town.hero[property]?
+				town.hero[property] += value if typeof town.hero[property] is "number" and typeof object[property] is "number"
 
 RandomTown.ObjectHandle["key"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
