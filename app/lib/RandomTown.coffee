@@ -7,20 +7,7 @@ grid = {ground: xxx, object: xxx}
 class RandomTown
 	constructor: (options) ->
 		options ?= {}
-		@floors ?= options.floors
-
-	startWithHero: (hero) ->
-		@hero = hero ? {}
-		@heroFloorIndex = 0
-
-		@heroLocation = @getEntryLocation @getCurFloor()
-		if not @heroLocation then console.log "RandomTown.startWithHero cannot find entry"
-		
-	getHeroFloorIndex: ->
-		@heroFloorIndex
-
-	getHeroLocation: ->
-		@heroLocation
+		{@floors, @hero, @heroFloorIndex, @heroLocation} = options
 
 	getFloor: (floorIndex) ->
 		@floors[floorIndex]
@@ -31,53 +18,27 @@ class RandomTown
 	getFloorGrid: (floor, row, col) ->
 		floor[row][col]
 
-	searchObjectByType: (floor, objectType) ->
-		floor ?= []
-		result = []
-		for row, cols of floor
-			for col, grid of cols
-				result.push([Number(row), Number(col)]) if grid?.object?.type is objectType
-		result
-
 	moveHandle: (row, col) ->
 		return if not (0 <= row < @getCurFloor().length) or not (0 <= col < @getCurFloor()[0].length)
 		
 		grid = @getFloorGrid @getCurFloor(), row, col
 
 		if grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?
-			RandomTown.ObjectHandle[grid.object.type].onEnter @, @hero, row, col
+			RandomTown.ObjectHandle[grid.object.type].onEnter @, grid.object, @heroLocation, [row, col]
 		else
 			@heroLocation = [row, col] if grid.ground is RandomTown.Road			
-		return
-		switch @getFloorGrid(@getCurFloor(), row, col).ground
-			when RandomTown.Road
-				@heroLocation = [row, col]
-			when RandomTown.Exit
-				nextFloor = @heroFloorIndex + 1
-				if nextFloor < @floors.length and @searchGridLocation(@getFloor(nextFloor), RandomTown.Entry)?
-					@heroFloorIndex = nextFloor
-					@heroLocation = @searchGridLocation @getCurFloor(), RandomTown.Entry
-				else
-					@heroLocation = [row, col]
-			when RandomTown.Entry
-				prevFloor = @heroFloorIndex - 1
-				if prevFloor >= 0 and @searchGridLocation(@getFloor(prevFloor), RandomTown.Exit)?
-					@heroFloorIndex = prevFloor
-					@heroLocation = @searchGridLocation @getCurFloor(), RandomTown.Exit
-				else
-					@heroLocation = [row, col]
 
 	moveUp: ->
-		@moveHandle @getHeroLocation()[0] - 1, @getHeroLocation()[1]
+		@moveHandle @heroLocation[0] - 1, @heroLocation[1]
 
 	moveDown: ->
-		@moveHandle @getHeroLocation()[0] + 1, @getHeroLocation()[1]
+		@moveHandle @heroLocation[0] + 1, @heroLocation[1]
 
 	moveLeft: ->
-		@moveHandle @getHeroLocation()[0], @getHeroLocation()[1] - 1
+		@moveHandle @heroLocation[0], @heroLocation[1] - 1
 
 	moveRight: ->
-		@moveHandle @getHeroLocation()[0], @getHeroLocation()[1] + 1
+		@moveHandle @heroLocation[0], @heroLocation[1] + 1
 
 RandomTown.Wall = -1
 RandomTown.Road = 0
@@ -89,11 +50,35 @@ RandomTown.ObjectHandle = {}
 	RandomTown object handles
 ###
 
-EntryHandle =
-	onEnter: (town, hero, location) ->
-		prevFloor = town.heroFloorIndex - 1
-		if prevFloor >= 0 and @searchGridLocation(@getFloor(prevFloor), RandomTown.Exit)?
-			@heroFloorIndex = prevFloor
-			@heroLocation = @searchGridLocation @getCurFloor(), RandomTown.Exit
+RandomTown.ObjectHandle["hole"] =
+	onEnter: (town, object, enterLocation, objectLocation) ->
+		town.heroFloorIndex = object.floorIndex
+		town.heroLocation = object.location
+
+RandomTown.ObjectHandle["crystal"] =
+	onEnter: (town, object, enterLocation, objectLocation) ->
+		if object.isUsed is true
+			town.heroLocation = objectLocation
 		else
-			@heroLocation = [row, col]
+			object.isUsed = true
+			for property, value of object
+				town.hero[property] += value if town.hero[property]?
+
+RandomTown.ObjectHandle["key"] =
+	onEnter: (town, object, enterLocation, objectLocation) ->
+		if object.isPickup is true
+			town.heroLocation = objectLocation
+		else
+			object.isPickup = true
+			town.hero.key ?= {}
+			town.hero.key[object.color] ?= 0
+			++town.hero.key[object.color]
+
+RandomTown.ObjectHandle["door"] =
+	onEnter: (town, object, enterLocation, objectLocation) ->
+		if object.isUnlock is true
+			town.heroLocation = objectLocation
+		else
+			if town.hero.key?[object.color] > 0
+				object.isUnlock = true
+				--town.hero.key[object.color]
