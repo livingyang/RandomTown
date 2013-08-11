@@ -185,3 +185,15 @@ describe "RandomTownSpec", ->
 		town.moveDown()
 		expect(town.heroLocation).toEqual([1, 0])
 
+	it "生成攻击数据", ->
+		attacker =
+			attack: 100
+			defense: 80
+			health: 120
+
+		defenser =
+			attack: 100
+			defense: 70
+			health: 100
+
+		
