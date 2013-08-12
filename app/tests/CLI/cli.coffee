@@ -4,7 +4,12 @@ RandomTown = require("../../lib/RandomTown.coffee").RandomTown
 town = new RandomTown
 	floors: [
 		[
-			[{ground: RandomTown.Road}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Wall}, {ground: RandomTown.Road}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Road}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Wall}]
+		]
+		[
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Road}]
 			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Wall}]
 		]
@@ -28,6 +33,16 @@ town.floors[0][1][2].object =
 town.floors[0][0][0].object =
 	type: "key"
 	color: "yellow"
+
+town.floors[0][0][2].object =
+	type: "hole"
+	floorIndex: 1
+	location: [1, 1]
+
+town.floors[1][1][1].object =
+	type: "hole"
+	floorIndex: 0
+	location: [0, 2]
 
 town.floors[0][1][1].object =
 	type: "door"
@@ -91,7 +106,7 @@ CommandHandle.floor = ->
 	floor = town.getSimpleFloors()[town.heroFloorIndex]
 	floor[town.heroLocation[0]][town.heroLocation[1]] = "Hero"
 	
-	(cols.join "\t" for cols in floor).join "\n"
+	"floor : #{town.heroFloorIndex + 1}/#{town.floors.length}\n" + (cols.join "\t" for cols in floor).join "\n"
 
 CommandHandle.town = ->
 	JSON.stringify town
