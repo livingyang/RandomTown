@@ -18,6 +18,20 @@ class RandomTown
 	getFloorGrid: (floor, row, col) ->
 		floor[row][col]
 
+	getSimpleFloors: ->
+		simpleFloors = []
+		for floor in @floors
+			simpleFloor = []
+			simpleFloors.push simpleFloor	
+			for cols in floor
+				simpleFloorCols = []
+				simpleFloor.push simpleFloorCols
+				for grid in cols
+					simpleFloorCols.push if grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?.getSimpleData?
+					then RandomTown.ObjectHandle[grid.object.type].getSimpleData grid.object, String(grid.ground)
+					else String(grid.ground)
+		simpleFloors
+
 	moveHandle: (row, col) ->
 		return if not (0 <= row < @getCurFloor().length) or not (0 <= col < @getCurFloor()[0].length)
 		
@@ -55,6 +69,9 @@ RandomTown.ObjectHandle["hole"] =
 		town.heroFloorIndex = object.floorIndex
 		town.heroLocation = object.location
 
+	getSimpleData: (object, ground) ->
+		object.type
+
 RandomTown.ObjectHandle["plus"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
 		if object.isUsed is true
@@ -63,6 +80,9 @@ RandomTown.ObjectHandle["plus"] =
 			object.isUsed = true
 			for property, value of object
 				town.hero[property] += value if typeof town.hero[property] is "number" and typeof object[property] is "number"
+
+	getSimpleData: (object, ground) ->
+		if object.isUsed is true then ground else object.type
 
 RandomTown.ObjectHandle["key"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
@@ -74,6 +94,9 @@ RandomTown.ObjectHandle["key"] =
 			town.hero.key[object.color] ?= 0
 			++town.hero.key[object.color]
 
+	getSimpleData: (object, ground) ->
+		if object.isPickup is true then ground else object.type
+
 RandomTown.ObjectHandle["door"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
 		if object.isUnlock is true
@@ -82,3 +105,6 @@ RandomTown.ObjectHandle["door"] =
 			if town.hero.key?[object.color] > 0
 				object.isUnlock = true
 				--town.hero.key[object.color]
+
+	getSimpleData: (object, ground) ->
+		if object.isUnlock is true then ground else object.type

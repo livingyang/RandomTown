@@ -58,37 +58,30 @@ CommandHandle.exit = ->
 
 CommandHandle.w = ->
 	town.moveUp()
-	@.floor()
+	@floor()
 
 CommandHandle.s = ->
 	town.moveDown()
-	@.floor()
+	@floor()
 
 CommandHandle.a = ->
 	town.moveLeft()
-	@.floor()
+	@floor()
 
 CommandHandle.d = ->
 	town.moveRight()
-	@.floor()
+	@floor()
 
 CommandHandle.floor = ->
-	result = ""
-	for row, cols of town.getCurFloor()
-		for col, grid of cols
-			if Number(row) is town.heroLocation[0] and Number(col) is town.heroLocation[1]
-				result += "Hero\t"
-			else
-				result += if grid.object?.type?
-				then "#{grid.object.type}\t"
-				else "#{grid.ground}\t"
-		result += "\n"
-	result
+	floor = town.getSimpleFloors()[town.heroFloorIndex]
+	floor[town.heroLocation[0]][town.heroLocation[1]] = "Hero"
+	
+	(cols.join "\t" for cols in floor).join "\n"
+	# floor.join "\n"
 
 CommandHandle.town = ->
 	JSON.stringify town
 
 CommandHandle.hero = ->
 	JSON.stringify town.hero
-
 
