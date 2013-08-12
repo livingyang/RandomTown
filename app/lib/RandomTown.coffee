@@ -114,7 +114,11 @@ RandomTown.ObjectHandle["enemy"] =
 		if object.health <= 0
 			town.heroLocation = objectLocation
 		else
-			heroFight = new HeroFight town.hero, object
+			heroFight = new HeroFight
+				attacker: town.hero
+				defenser: object
+				maxTurnCount: 100
+				
 			town.hero.health = heroFight.attacker.health
 			object.health = heroFight.defenser.health
 			town.hero.exp += object.exp
