@@ -8,7 +8,7 @@ town = new RandomTown
 		[
 			[{ground: RandomTown.Road}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Road}]
-			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 		]
 	]
 	hero:
@@ -21,11 +21,19 @@ town = new RandomTown
 	heroFloorIndex: 0
 	heroLocation: [1, 0]
 
-town.floors[0][1][1].object =
+town.floors[0][1][2].object =
 	type: "plus"
 	attack: 2
 	exp: 10
 	errorProperty: 10
+
+town.floors[0][0][0].object =
+	type: "key"
+	color: "yellow"
+
+town.floors[0][1][1].object =
+	type: "door"
+	color: "yellow"
 
 CommandHandle = {}
 
@@ -50,25 +58,30 @@ CommandHandle.exit = ->
 
 CommandHandle.w = ->
 	town.moveUp()
-	JSON.stringify town
+	@.floor()
 
 CommandHandle.s = ->
 	town.moveDown()
-	JSON.stringify town
+	@.floor()
 
 CommandHandle.a = ->
 	town.moveLeft()
-	JSON.stringify town
+	@.floor()
 
 CommandHandle.d = ->
 	town.moveRight()
-	JSON.stringify town
+	@.floor()
 
 CommandHandle.floor = ->
 	result = ""
-	for rows in town.getCurFloor()
-		for grid in rows
-			result += "#{grid.ground}\t"
+	for row, cols of town.getCurFloor()
+		for col, grid of cols
+			if Number(row) is town.heroLocation[0] and Number(col) is town.heroLocation[1]
+				result += "Hero\t"
+			else
+				result += if grid.object?.type?
+				then "#{grid.object.type}\t"
+				else "#{grid.ground}\t"
 		result += "\n"
 	result
 
