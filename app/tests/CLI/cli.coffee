@@ -1,6 +1,4 @@
 readline = require("readline")
-
-HeroFight = require("../../lib/HeroFight.coffee").HeroFight
 RandomTown = require("../../lib/RandomTown.coffee").RandomTown
 
 town = new RandomTown
@@ -8,7 +6,7 @@ town = new RandomTown
 		[
 			[{ground: RandomTown.Road}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
 			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Road}]
-			[{ground: RandomTown.Road}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Wall}]
 		]
 	]
 	hero:
@@ -39,6 +37,7 @@ town.floors[0][2][1].object =
 	type: "enemy"
 	attack: 100
 	defense: 30
+	health: 10
 	exp: 10
 	money: 10
 
@@ -78,6 +77,15 @@ CommandHandle.a = ->
 CommandHandle.d = ->
 	town.moveRight()
 	@floor()
+
+CommandHandle.f = ->
+	@floor()
+
+CommandHandle.e = ->
+	@exit()
+
+CommandHandle.h = ->
+	@hero()
 
 CommandHandle.floor = ->
 	floor = town.getSimpleFloors()[town.heroFloorIndex]

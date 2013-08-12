@@ -37,10 +37,10 @@ class RandomTown
 		
 		grid = @getFloorGrid @getCurFloor(), row, col
 
-		if grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?
+		if grid.ground is RandomTown.Road and grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?
 			RandomTown.ObjectHandle[grid.object.type].onEnter @, grid.object, @heroLocation, [row, col]
 		else
-			@heroLocation = [row, col] if grid.ground is RandomTown.Road			
+			@heroLocation = [row, col] if grid.ground is RandomTown.Road
 
 	moveUp: ->
 		@moveHandle @heroLocation[0] - 1, @heroLocation[1]
