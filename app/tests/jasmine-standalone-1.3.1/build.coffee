@@ -15,7 +15,6 @@ buildFile = (filePath, distDir) ->
 srcFiles = [
 	"../../lib/MazeGenerator.coffee"
 	"../../lib/RandomTown.coffee"
-	"../../lib/HeroFight.coffee"
 ]
 
 srcFiles.forEach (srcFile) ->
