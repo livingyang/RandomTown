@@ -108,3 +108,17 @@ RandomTown.ObjectHandle["door"] =
 
 	getSimpleData: (object, ground) ->
 		if object.isUnlock is true then ground else object.type
+
+RandomTown.ObjectHandle["enemy"] =
+	onEnter: (town, object, enterLocation, objectLocation) ->
+		if object.health <= 0
+			town.heroLocation = objectLocation
+		else
+			heroFight = new HeroFight town.hero, object
+			town.hero.health = heroFight.attacker.health
+			object.health = heroFight.defenser.health
+			town.hero.exp += object.exp
+			town.hero.money += object.money
+
+	getSimpleData: (object, ground) ->
+		if object.health <= 0 then ground else object.type

@@ -35,6 +35,13 @@ town.floors[0][1][1].object =
 	type: "door"
 	color: "yellow"
 
+town.floors[0][2][1].object =
+	type: "enemy"
+	attack: 100
+	defense: 30
+	exp: 10
+	money: 10
+
 CommandHandle = {}
 
 rl = readline.createInterface process.stdin, process.stdout
@@ -44,7 +51,7 @@ rl.prompt()
 rl.on("line", (line) ->
 	if typeof CommandHandle[line.trim()] is "function"
 	then console.log CommandHandle[line.trim()]()
-	else console.log "No comand handle : #{line.trim()}"
+	else console.log "No comand handle : #{line.trim()}\ntype 'help' to get help"
 	rl.prompt()
 ).on "close", ->
 	console.log "Have a great day!"
@@ -77,7 +84,6 @@ CommandHandle.floor = ->
 	floor[town.heroLocation[0]][town.heroLocation[1]] = "Hero"
 	
 	(cols.join "\t" for cols in floor).join "\n"
-	# floor.join "\n"
 
 CommandHandle.town = ->
 	JSON.stringify town

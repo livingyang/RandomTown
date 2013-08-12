@@ -245,15 +245,31 @@ describe "RandomTownSpec", ->
 		]
 
 
-	it "生成攻击数据", ->
-		attacker =
+	it "测试敌人", ->
+		floors = []
+		floors.push [
+			[{ground: 0}, {ground: 0}]
+			[{ground: 0}, {ground: 0}]
+		]
+		floors[0][0][1].object =
+			type: "enemy"
 			attack: 100
-			defense: 80
-			health: 120
+			defense: 10
+			health: 10
+			exp: 10
+			money: 10
 
-		defenser =
-			attack: 100
-			defense: 70
-			health: 100
+		town = new RandomTown
+			floors: floors
+			hero: hero
+			heroFloorIndex: 0
+			heroLocation: [0, 0]
 
-		
+		expect(town.hero.exp).toBe 0
+		expect(town.hero.money).toBe 200
+		town.moveRight()
+		expect(town.hero.exp).toBe 10
+		expect(town.hero.money).toBe 210
+		expect(town.heroLocation).toEqual([0, 0])
+		town.moveRight()
+		expect(town.heroLocation).toEqual([0, 1])
