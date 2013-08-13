@@ -52,7 +52,7 @@ town.floors[0][2][1].object =
 	type: "enemy"
 	attack: 100
 	defense: 30
-	health: 10
+	health: 100
 	exp: 10
 	money: 10
 
@@ -136,9 +136,11 @@ CommandHandle.hero = ->
 
 CommandHandle.g = (params) ->
 	@grid params
-	
+
 CommandHandle.grid = (params) ->
 	if params? and params.length >= 2
 	then JSON.stringify town.getCurFloor()[params[0]][params[1]]
 	else "grid not find"
 	
+CommandHandle.damage = (params) ->
+	town.getEnemyDamage params?[0], params?[1]

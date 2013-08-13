@@ -34,6 +34,12 @@ describe "RandomTownSpec", ->
 		town = new RandomTown
 			floors : floors
 
+		expect(town.isValidRowAndCol 1, 1).toBe true
+		expect(town.isValidRowAndCol 0, 2).toBe true
+		expect(town.isValidRowAndCol 0, "1").toBe true
+		expect(town.isValidRowAndCol 0, 3).toBe false
+		expect(town.isValidRowAndCol 0).toBe false
+
 		expect(town.floors.length).toBe(2)
 		expect(town.floors[0][0][0].ground).toBe(RandomTown.Wall)
 		expect(town.floors[0][1][0].ground).toBe(RandomTown.Road)
@@ -297,7 +303,7 @@ describe "RandomTownSpec", ->
 			type: "enemy"
 			attack: 100
 			defense: 10
-			health: 10
+			health: 100
 			exp: 10
 			money: 10
 
@@ -306,6 +312,8 @@ describe "RandomTownSpec", ->
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
+
+		expect(town.getEnemyDamage 0, 1).toEqual 20
 
 		expect(town.hero.exp).toBe 0
 		expect(town.hero.money).toBe 200

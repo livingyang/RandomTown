@@ -16,7 +16,7 @@ class RandomTown
 		@getFloor(@heroFloorIndex)
 
 	getFloorGrid: (floor, row, col) ->
-		floor[row][col]
+		floor[row][col] if @isValidRowAndCol row, col
 
 	getSimpleFloors: ->
 		simpleFloors = []
@@ -35,8 +35,22 @@ class RandomTown
 	changeHeroProperty: (properties) ->
 		@hero[propertyName] += value for propertyName, value of properties when typeof @hero[propertyName] is "number" and typeof value is "number"
 
+	isValidRowAndCol: (row, col) ->
+		0 <= row < @floors[0].length and 0 <= col < @floors[0][0].length
+
+	getEnemyDamage: (row, col) ->
+		if @isValidRowAndCol row, col
+			grid = @getFloorGrid @getCurFloor(), row, col
+			if grid.object?.type is "enemy"
+				heroFight = new HeroFight
+					attacker: @hero
+					defenser: grid.object
+
+				return @hero.health - heroFight.attacker.health
+		0
+
 	moveHandle: (row, col) ->
-		if 0 <= row < @getCurFloor().length and 0 <= col < @getCurFloor()[0].length
+		if @isValidRowAndCol row, col
 			grid = @getFloorGrid @getCurFloor(), row, col			
 			if grid.ground is RandomTown.Road and grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?
 				RandomTown.ObjectHandle[grid.object.type].onEnter @, grid.object, @heroLocation, [row, col]
@@ -71,7 +85,7 @@ class HeroFight
 
 		@attacker = JSON.parse(JSON.stringify(options.attacker ? {}))
 		@defenser = JSON.parse(JSON.stringify(options.defenser ? {}))
-		@maxTurnCount = options.maxTurnCount
+		@maxTurnCount = options.maxTurnCount ? 100
 
 		for turnIndex in [0...@maxTurnCount]
 			[attacker, defenser] = if turnIndex % 2 is 0
