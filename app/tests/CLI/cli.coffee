@@ -1,5 +1,6 @@
 readline = require("readline")
 RandomTown = require("../../lib/RandomTown.coffee").RandomTown
+MazeGenerator = require("../../lib/MazeGenerator.coffee").MazeGenerator
 
 town = new RandomTown
 	floors: [
