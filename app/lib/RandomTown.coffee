@@ -76,6 +76,29 @@ RandomTown.ObjectHandle = {}
 @RandomTown = RandomTown
 
 ###
+function GenerateFloor
+###
+
+GenerateFloor = (options) ->
+	options ?= {}
+	rows = options.rows ? 2
+	cols = options.cols ? 2
+	road = options.road ? 0
+	wall = options.wall ? -1
+	wallPercent = options.wallPercent ? 0
+
+	floor = []
+	# for row in [0...rows]
+	# 	floorRow = []
+	# 	floor.push floorRow
+	# 	for col in [0...cols]
+			
+		
+	
+	floor
+
+
+###
 class HeroFight
 ###
 

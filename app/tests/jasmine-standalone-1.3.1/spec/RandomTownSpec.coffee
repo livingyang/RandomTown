@@ -323,3 +323,15 @@ describe "RandomTownSpec", ->
 		expect(town.heroLocation).toEqual([0, 0])
 		town.moveRight()
 		expect(town.heroLocation).toEqual([0, 1])
+	
+	it "随机生成楼层", ->
+		expect(GenerateFloor
+			rows: 2 # default 2
+			cols: 2 # default 2
+			road: RandomTown.Road # default 0
+			wall: RandomTown.Wall # default -1
+			wallPercent: 0 # default 0
+		).toBe [
+			[RandomTown.Road, RandomTown.Road]
+			[RandomTown.Road, RandomTown.Road]
+		]
