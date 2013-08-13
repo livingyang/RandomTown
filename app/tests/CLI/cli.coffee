@@ -63,9 +63,10 @@ rl.setPrompt "> "
 rl.prompt()
 
 rl.on("line", (line) ->
-	if typeof CommandHandle[line.trim()] is "function"
-	then console.log CommandHandle[line.trim()]()
-	else console.log "No comand handle : #{line.trim()}\ntype 'help' to get help"
+	[command, params...] = line.trim().split " "
+	if typeof CommandHandle[command] is "function"
+	then console.log CommandHandle[command](params)
+	else console.log "No command handle : #{command}\ntype 'help' to get help"
 	rl.prompt()
 ).on "close", ->
 	console.log "Have a great day!"
@@ -98,8 +99,8 @@ CommandHandle.d = ->
 	town.moveRight()
 	@floor()
 
-CommandHandle.f = ->
-	@floor()
+CommandHandle.f = (params) ->
+	@floor params
 
 CommandHandle.e = ->
 	@exit()
@@ -107,11 +108,15 @@ CommandHandle.e = ->
 CommandHandle.h = ->
 	@hero()
 
-CommandHandle.floor = ->
-	floor = town.getSimpleFloors()[town.heroFloorIndex]
+CommandHandle.floor = (params) ->
+	floorIndex = if 0 < params?[0] <= town.floors.length
+	then Number(params[0]) - 1
+	else town.heroFloorIndex
+
+	floor = town.getSimpleFloors()[floorIndex]
 	floor[town.heroLocation[0]][town.heroLocation[1]] = "Hero"
 	
-	"floor : #{town.heroFloorIndex + 1}/#{town.floors.length}\n" + (cols.join "\t" for cols in floor).join "\n"
+	"floor : #{floorIndex + 1}/#{town.floors.length}\n" + (cols.join "\t" for cols in floor).join "\n"
 
 CommandHandle.exp = ->
 	town.changeHeroProperty
@@ -129,3 +134,11 @@ CommandHandle.town = ->
 CommandHandle.hero = ->
 	JSON.stringify town.hero
 
+CommandHandle.g = (params) ->
+	@grid params
+	
+CommandHandle.grid = (params) ->
+	if params? and params.length >= 2
+	then JSON.stringify town.getCurFloor()[params[0]][params[1]]
+	else "grid not find"
+	
