@@ -72,7 +72,12 @@ rl.on("line", (line) ->
 	process.exit 0
 
 CommandHandle.help = ->
-	"[w|s|a|d] to move hero\n"
+	"
+	[w|s|a|d] to move hero\n
+	floor|f to show current floor\n
+	hero|h to show hero info\n
+	exp to use exp to up attack\n
+	money to use money to up defense"
 
 CommandHandle.exit = ->
 	rl.close()
@@ -107,6 +112,16 @@ CommandHandle.floor = ->
 	floor[town.heroLocation[0]][town.heroLocation[1]] = "Hero"
 	
 	"floor : #{town.heroFloorIndex + 1}/#{town.floors.length}\n" + (cols.join "\t" for cols in floor).join "\n"
+
+CommandHandle.exp = ->
+	town.changeHeroProperty
+		exp: -10
+		attack: 1
+
+CommandHandle.money = ->
+	town.changeHeroProperty
+		money: -10
+		defense: 1
 
 CommandHandle.town = ->
 	JSON.stringify town

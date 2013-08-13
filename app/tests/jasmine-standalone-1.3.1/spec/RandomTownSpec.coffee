@@ -118,6 +118,21 @@ describe "RandomTownSpec", ->
 		expect(town.heroFloorIndex).toBe(0)
 		expect(town.heroLocation).toEqual([1, 1])
 
+	it "测试改变hero属性", ->
+		town = new RandomTown
+			floors: [[0]]
+			hero: hero
+			heroFloorIndex: 0
+			heroLocation: [0, 0]
+
+		expect(town.hero.attack).toBe 100
+		expect(town.hero.money).toBe 200
+		town.changeHeroProperty
+			money: -10
+			attack: +5
+		expect(town.hero.attack).toBe 105
+		expect(town.hero.money).toBe 190
+
 	it "测试plus对象", ->
 		floors = []
 		floors.push [

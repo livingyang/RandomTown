@@ -32,15 +32,16 @@ class RandomTown
 					else String(grid.ground)
 		simpleFloors
 
-	moveHandle: (row, col) ->
-		return if not (0 <= row < @getCurFloor().length) or not (0 <= col < @getCurFloor()[0].length)
-		
-		grid = @getFloorGrid @getCurFloor(), row, col
+	changeHeroProperty: (properties) ->
+		@hero[propertyName] += value for propertyName, value of properties when typeof @hero[propertyName] is "number" and typeof value is "number"
 
-		if grid.ground is RandomTown.Road and grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?
-			RandomTown.ObjectHandle[grid.object.type].onEnter @, grid.object, @heroLocation, [row, col]
-		else
-			@heroLocation = [row, col] if grid.ground is RandomTown.Road
+	moveHandle: (row, col) ->
+		if 0 <= row < @getCurFloor().length and 0 <= col < @getCurFloor()[0].length
+			grid = @getFloorGrid @getCurFloor(), row, col			
+			if grid.ground is RandomTown.Road and grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?
+				RandomTown.ObjectHandle[grid.object.type].onEnter @, grid.object, @heroLocation, [row, col]
+			else
+				@heroLocation = [row, col] if grid.ground is RandomTown.Road
 
 	moveUp: ->
 		@moveHandle @heroLocation[0] - 1, @heroLocation[1]
@@ -100,9 +101,8 @@ RandomTown.ObjectHandle["plus"] =
 			town.heroLocation = objectLocation
 		else
 			object.isUsed = true
-			for property, value of object
-				town.hero[property] += value if typeof town.hero[property] is "number" and typeof object[property] is "number"
-
+			town.changeHeroProperty object
+			
 	getSimpleData: (object, ground) ->
 		if object.isUsed is true then ground else object.type
 
