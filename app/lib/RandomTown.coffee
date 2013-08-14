@@ -79,6 +79,42 @@ RandomTown.ObjectHandle = {}
 function GenerateFloor
 ###
 
+isHitPercentObject = (percentObjects) ->
+	notHitPercent = 1
+	for object, percent of percentObjects when 0 <= percent <= 1
+		notHitPercent *= (1 - notHitPercent)
+	Math.random() >= notHitPercent
+
+getPercentObject = (percentObjects) ->
+	totalPercent += percent for object, percent of percentObjects when 0 <= percent <= 1
+	
+	
+GeneratePath = (options) ->
+	
+	if 0 <= options.startLocation[0] < options.rows and
+	0 <= options.startLocation[1] < options.cols and
+	options.rows * options.cols > 1
+		options.maxStep ?= options.rows * options.cols
+		martix = ((0 for col in [0...options.cols]) for row in [0...options.rows])
+		path = []
+		nextStepSet = [options.startLocation]
+		while path.length < options.maxStep and nextStepSet.length > 0			
+			nextStep = nextStepSet[Math.floor Math.random() * nextStepSet.length]
+			martix[step[0]][step[1]] = -1 for step in nextStepSet
+			path.push nextStep
+			nextStepSet = []
+			for stepOffset in [[1, 0], [0, 1], [-1, 0], [0, -1]]
+				step = [nextStep[0] + stepOffset[0], nextStep[1] + stepOffset[1]]
+				if 0 <= step[0] < options.rows and
+				0 <= step[1] < options.cols and
+				martix[step[0]][step[1]] is 0
+					nextStepSet.push step
+		path
+	else
+		[options.startLocation]
+
+	# {rows, cols, startLocation, maxStep} = options
+
 GenerateFloor = (options) ->
 	options ?= {}
 	rows = options.rows ? 2
@@ -87,16 +123,28 @@ GenerateFloor = (options) ->
 	wall = options.wall ? -1
 	wallPercent = options.wallPercent ? 0
 
-	floor = []
-	# for row in [0...rows]
-	# 	floorRow = []
-	# 	floor.push floorRow
-	# 	for col in [0...cols]
-			
-		
-	
-	floor
+	(((if Math.random() < wallPercent then {ground: wall} else {ground: road}) for col in [0...cols]) for row in [0...rows])
 
+GenerateFloorObject = (options) ->
+	floor = options.floor ? []
+	path = options.path ? []
+	road = options.road ? 0
+	objects = options.objects ? {}
+
+	for step in path
+		floor[step[0]][step[1]].ground = road
+
+	for cols in floor
+		for grid in cols
+			for type, percent of objects when grid.ground is road
+				grid.object =
+					type: type
+	floor
+	
+
+@GeneratePath = GeneratePath
+@GenerateFloor = GenerateFloor
+@GenerateFloorObject = GenerateFloorObject
 
 ###
 class HeroFight

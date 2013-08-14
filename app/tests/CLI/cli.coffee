@@ -1,5 +1,7 @@
 readline = require("readline")
 RandomTown = require("../../lib/RandomTown.coffee").RandomTown
+GenerateFloor = require("../../lib/RandomTown.coffee").GenerateFloor
+GeneratePath = require("../../lib/RandomTown.coffee").GeneratePath
 MazeGenerator = require("../../lib/MazeGenerator.coffee").MazeGenerator
 
 town = new RandomTown
@@ -145,3 +147,36 @@ CommandHandle.grid = (params) ->
 	
 CommandHandle.damage = (params) ->
 	town.getEnemyDamage params?[0], params?[1]
+
+CommandHandle.reset = (params) ->
+
+	floor = GenerateFloor
+		rows: 10
+		cols: 10
+		road: RandomTown.Road
+		wall: RandomTown.Wall
+		wallPercent: 1
+
+	startLocation = [0, 0]
+
+	path = GeneratePath
+		rows: 10
+		cols: 10
+		startLocation: startLocation
+
+	(floor[step[0]][step[1]].ground = RandomTown.Road for step in path)
+
+	town = new RandomTown
+		floors: [floor]
+		hero:
+			name: "SuperManXX"
+			attack: 100
+			defense: 80
+			health: 1000
+			exp: 0
+			money: 200
+		heroFloorIndex: 0
+		heroLocation: startLocation
+
+	@town()
+	

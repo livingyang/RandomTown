@@ -324,14 +324,93 @@ describe "RandomTownSpec", ->
 		town.moveRight()
 		expect(town.heroLocation).toEqual([0, 1])
 	
+	it "随机生成路径", ->
+		expect(GeneratePath
+			rows: 1
+			cols: 4
+			startLocation: [0, 0]
+		).toEqual [
+			[0, 0]
+			[0, 1]
+			[0, 2]
+			[0, 3]
+		]
+
+		expect(GeneratePath
+			rows: 1
+			cols: 4
+			startLocation: [0, 0]
+			maxStep: 2
+		).toEqual [
+			[0, 0]
+			[0, 1]
+		]
+
+		expect(GeneratePath
+			rows: 3
+			cols: 1
+			startLocation: [2, 0]
+			maxStep: 2
+		).toEqual [
+			[2, 0]
+			[1, 0]
+		]
+	
 	it "随机生成楼层", ->
 		expect(GenerateFloor
 			rows: 2 # default 2
 			cols: 2 # default 2
-			road: RandomTown.Road # default 0
-			wall: RandomTown.Wall # default -1
+			road: 0 # default 0
+			wall: -1 # default -1
 			wallPercent: 0 # default 0
-		).toBe [
-			[RandomTown.Road, RandomTown.Road]
-			[RandomTown.Road, RandomTown.Road]
+		).toEqual [
+			[{ground: 0}, {ground: 0}]
+			[{ground: 0}, {ground: 0}]
+		]
+
+		expect(GenerateFloor
+			rows: 2
+			cols: 3
+			road: 0
+			wall: -1
+			wallPercent: 1
+		).toEqual [
+			[{ground: -1}, {ground: -1}, {ground: -1}]
+			[{ground: -1}, {ground: -1}, {ground: -1}]
+		]
+
+		expect(GenerateFloorObject
+			floor: [
+				[{ground: -1}, {ground: -1}]
+				[{ground: -1}, {ground: -1}]
+			]
+			path: [
+				[0, 0]
+				[1, 0]
+				[1, 1]
+			]
+			road: 0 # default 0
+			objects:
+				"enemy": 1
+		).toEqual [
+			[{ground: 0, object: {type: "enemy"}}, {ground: -1}]
+			[{ground: 0, object: {type: "enemy"}}, {ground: 0, object: {type: "enemy"}}]
+		]
+
+		expect(GenerateFloorObject
+			floor: [
+				[{ground: -1}, {ground: -1}]
+				[{ground: -1}, {ground: -1}]
+			]
+			path: [
+				[0, 0]
+				[1, 0]
+				[1, 1]
+			]
+			road: 0 # default 0
+			objects:
+				"enemy": 0
+		).toEqual [
+			[{ground: 0}, {ground: -1}]
+			[{ground: 0}, {ground: 0}]
 		]
