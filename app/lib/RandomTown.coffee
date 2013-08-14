@@ -82,13 +82,20 @@ function GenerateFloor
 isHitPercentObject = (percentObjects) ->
 	notHitPercent = 1
 	for object, percent of percentObjects when 0 <= percent <= 1
-		notHitPercent *= (1 - notHitPercent)
+		notHitPercent *= (1 - percent)
 	Math.random() >= notHitPercent
 
 getPercentObject = (percentObjects) ->
+	totalPercent = 0
 	totalPercent += percent for object, percent of percentObjects when 0 <= percent <= 1
 	
-	
+	targetPercent = Math.random() * totalPercent
+	for object, percent of percentObjects when 0 <= percent <= 1
+		targetPercent -= percent
+		if targetPercent <= 0
+			return object
+	return null
+
 GeneratePath = (options) ->
 	
 	if 0 <= options.startLocation[0] < options.rows and
@@ -113,8 +120,6 @@ GeneratePath = (options) ->
 	else
 		[options.startLocation]
 
-	# {rows, cols, startLocation, maxStep} = options
-
 GenerateFloor = (options) ->
 	options ?= {}
 	rows = options.rows ? 2
@@ -136,9 +141,8 @@ GenerateFloorObject = (options) ->
 
 	for cols in floor
 		for grid in cols
-			for type, percent of objects when grid.ground is road
-				grid.object =
-					type: type
+			if grid.ground is road and isHitPercentObject objects
+				grid.object = {type: getPercentObject objects}
 	floor
 	
 

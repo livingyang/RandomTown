@@ -2,6 +2,7 @@ readline = require("readline")
 RandomTown = require("../../lib/RandomTown.coffee").RandomTown
 GenerateFloor = require("../../lib/RandomTown.coffee").GenerateFloor
 GeneratePath = require("../../lib/RandomTown.coffee").GeneratePath
+GenerateFloorObject = require("../../lib/RandomTown.coffee").GenerateFloorObject
 MazeGenerator = require("../../lib/MazeGenerator.coffee").MazeGenerator
 
 town = new RandomTown
@@ -164,8 +165,22 @@ CommandHandle.reset = (params) ->
 		cols: 10
 		startLocation: startLocation
 
-	(floor[step[0]][step[1]].ground = RandomTown.Road for step in path)
+	floor = GenerateFloorObject
+			floor: floor
+			path: path
+			road: RandomTown.Road
+			objects:
+				"key": 0.2
+				"door": 0.1
 
+	for cols in floor
+		for grid in cols
+			switch grid.object?.type
+				when "key"
+					grid.object.color = "yellow"
+				when "door"
+					grid.object.color = "yellow"
+				
 	town = new RandomTown
 		floors: [floor]
 		hero:
