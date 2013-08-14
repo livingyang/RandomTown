@@ -167,7 +167,8 @@ class HeroFight
 			then [@attacker, @defenser]
 			else [@defenser, @attacker]
 
-			defenser.health -= attacker.attack - defenser.defense
+			damage = attacker.attack - defenser.defense
+			defenser.health -= damage if damage > 0
 			break if defenser.health <= 0
 
 @HeroFight = HeroFight
@@ -232,8 +233,8 @@ RandomTown.ObjectHandle["enemy"] =
 
 			town.hero.health = heroFight.attacker.health
 			object.health = heroFight.defenser.health
-			town.hero.exp += object.exp
-			town.hero.money += object.money
+			town.hero.exp += object.exp if object.exp?
+			town.hero.money += object.money if object.money?
 
 	getSimpleData: (object, ground) ->
 		if object.health <= 0 then ground else object.type

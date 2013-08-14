@@ -172,6 +172,8 @@ CommandHandle.reset = (params) ->
 			objects:
 				"key": 0.2
 				"door": 0.1
+				"plus": 0.1
+				"enemy": 0.1
 
 	for cols in floor
 		for grid in cols
@@ -180,6 +182,16 @@ CommandHandle.reset = (params) ->
 					grid.object.color = "yellow"
 				when "door"
 					grid.object.color = "yellow"
+				when "plus"
+					if Math.random() < 0.5
+					then grid.object.attack = 2
+					else grid.object.defense = 2
+				when "enemy"
+					grid.object.health = 100
+					grid.object.attack = 50
+					grid.object.defense = 30
+					grid.object.exp = 10
+					grid.object.money = 10
 				
 	town = new RandomTown
 		floors: [floor]
