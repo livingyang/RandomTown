@@ -19,18 +19,12 @@ class RandomTown
 		floor[row][col] if @isValidRowAndCol row, col
 
 	getSimpleFloors: ->
-		simpleFloors = []
 		for floor in @floors
-			simpleFloor = []
-			simpleFloors.push simpleFloor	
 			for cols in floor
-				simpleFloorCols = []
-				simpleFloor.push simpleFloorCols
 				for grid in cols
-					simpleFloorCols.push if grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?.getSimpleData?
+					if grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?.getSimpleData?
 					then RandomTown.ObjectHandle[grid.object.type].getSimpleData grid.object, String(grid.ground)
 					else String(grid.ground)
-		simpleFloors
 
 	changeHeroProperty: (properties) ->
 		@hero[propertyName] += value for propertyName, value of properties when typeof @hero[propertyName] is "number" and typeof value is "number"
@@ -179,7 +173,13 @@ class HeroFight
 
 RandomTown.ObjectHandle["hole"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
-		town.heroFloorIndex = object.floorIndex
+		if object.floorIndex is -1
+			console.log "Town Start Point enter"
+		else if object.floorIndex is town.floors.length
+			console.log "Town End Point enter"
+		else
+			town.heroFloorIndex = object.floorIndex
+		
 		town.heroLocation = object.location
 
 	getSimpleData: (object, ground) ->

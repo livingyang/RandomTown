@@ -113,12 +113,13 @@ CommandHandle.h = ->
 	@hero()
 
 CommandHandle.floor = (params) ->
-	floorIndex = if 0 < params?[0] <= town.floors.length
+	floorIndex = if params?[0]? and 0 < params[0] <= town.floors.length
 	then Number(params[0]) - 1
 	else town.heroFloorIndex
 
 	floor = town.getSimpleFloors()[floorIndex]
-	floor[town.heroLocation[0]][town.heroLocation[1]] = "Hero"
+
+	floor[town.heroLocation[0]][town.heroLocation[1]] = "Hero" if town.heroFloorIndex is floorIndex
 	
 	"floor : #{floorIndex + 1}/#{town.floors.length}\n" + (cols.join "\t" for cols in floor).join "\n"
 
@@ -151,50 +152,64 @@ CommandHandle.damage = (params) ->
 
 CommandHandle.reset = (params) ->
 
-	floor = GenerateFloor
-		rows: 10
-		cols: 10
-		road: RandomTown.Road
-		wall: RandomTown.Wall
-		wallPercent: 1
+	initLocation = startLocation = [0, 0]
 
-	startLocation = [0, 0]
+	floors = for floorIndex in [0...4]
 
-	path = GeneratePath
-		rows: 10
-		cols: 10
-		startLocation: startLocation
+		rows = 8
+		cols = 8
+		path = GeneratePath
+			rows: rows
+			cols: cols
+			startLocation: startLocation
 
-	floor = GenerateFloorObject
-			floor: floor
-			path: path
-			road: RandomTown.Road
-			objects:
-				"key": 0.2
-				"door": 0.1
-				"plus": 0.1
-				"enemy": 0.1
+		floor = GenerateFloorObject
+				floor: GenerateFloor
+					rows: rows
+					cols: cols
+					road: RandomTown.Road
+					wall: RandomTown.Wall
+					wallPercent: 1
+				path: path
+				road: RandomTown.Road
+				objects:
+					"key": 0.2
+					"door": 0.1
+					"plus": 0.1
+					"enemy": 0.1
 
-	for cols in floor
-		for grid in cols
-			switch grid.object?.type
-				when "key"
-					grid.object.color = "yellow"
-				when "door"
-					grid.object.color = "yellow"
-				when "plus"
-					if Math.random() < 0.5
-					then grid.object.attack = 2
-					else grid.object.defense = 2
-				when "enemy"
-					grid.object.health = 100
-					grid.object.attack = 50
-					grid.object.defense = 30
-					grid.object.exp = 10
-					grid.object.money = 10
-				
+		for cols in floor
+			for grid in cols
+				switch grid.object?.type
+					when "key"
+						grid.object.color = "yellow"
+					when "door"
+						grid.object.color = "yellow"
+					when "plus"
+						if Math.random() < 0.5
+						then grid.object.attack = 2
+						else grid.object.defense = 2
+					when "enemy"
+						grid.object.health = 100
+						grid.object.attack = 50
+						grid.object.defense = 30
+						grid.object.exp = 10
+						grid.object.money = 10
+
+		floor[startLocation[0]][startLocation[1]].object = 
+			type: "hole"
+			floorIndex: floorIndex - 1
+			location: startLocation
+		startLocation = path[path.length - 1]
+		floor[startLocation[0]][startLocation[1]].object = 
+			type: "hole"
+			floorIndex: floorIndex + 1
+			location: startLocation
+
+		floor
+
 	town = new RandomTown
-		floors: [floor]
+		floors: floors
 		hero:
 			name: "SuperManXX"
 			attack: 100
@@ -203,7 +218,7 @@ CommandHandle.reset = (params) ->
 			exp: 0
 			money: 200
 		heroFloorIndex: 0
-		heroLocation: startLocation
+		heroLocation: initLocation
 
 	@town()
 	
