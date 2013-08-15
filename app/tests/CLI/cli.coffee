@@ -169,7 +169,7 @@ CommandHandle.reset = (params) ->
 					cols: cols
 					road: RandomTown.Road
 					wall: RandomTown.Wall
-					wallPercent: 1
+					wallPercent: 0.5
 				path: path
 				road: RandomTown.Road
 				objects:

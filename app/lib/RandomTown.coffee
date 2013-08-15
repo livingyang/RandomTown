@@ -22,7 +22,7 @@ class RandomTown
 		for floor in @floors
 			for cols in floor
 				for grid in cols
-					if grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?.getSimpleData?
+					if grid.ground is RandomTown.Road and grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?.getSimpleData?
 					then RandomTown.ObjectHandle[grid.object.type].getSimpleData grid.object, String(grid.ground)
 					else String(grid.ground)
 
@@ -114,28 +114,57 @@ GeneratePath = (options) ->
 	else
 		[options.startLocation]
 
+###
+{number} options.rows default:2
+{number} options.cols default:2
+{number} options.road default:0
+{number} options.wall default:-1
+{number|function(row, col)} options.wallPercent default:0
+###
 GenerateFloor = (options) ->
 	options ?= {}
 	rows = options.rows ? 2
 	cols = options.cols ? 2
 	road = options.road ? 0
 	wall = options.wall ? -1
-	wallPercent = options.wallPercent ? 0
+	options.wallPercent ?= 0
+	wallPercent = if typeof options.wallPercent is "function"
+	then options.wallPercent
+	else -> options.wallPercent
+	
+	for row in [0...rows]
+		for col in [0...cols]
+			if Math.random() < wallPercent(row, col)
+			then {ground: wall}
+			else {ground: road}
 
-	(((if Math.random() < wallPercent then {ground: wall} else {ground: road}) for col in [0...cols]) for row in [0...rows])
-
+###
+路径的出口与入口附近不允许设置任何物体
+{array} options.floor default:[] element:[[row, col]...]
+{array} options.path default:[] element:[row, col]
+{number} options.road default:0
+{object} options.objects default:{}
+	key: name value: {number|function([[number..3]..3])}
+###
 GenerateFloorObject = (options) ->
 	floor = options.floor ? []
 	path = options.path ? []
 	road = options.road ? 0
 	objects = options.objects ? {}
 
+	distanceOfGrid = (grid1, grid2) ->
+		if grid1? and grid2?
+		then (Math.abs grid1[0] - grid2[0]) + (Math.abs grid1[1] - grid2[1])
+		else undefined
+
 	for step in path
 		floor[step[0]][step[1]].ground = road
 
-	for cols in floor
-		for grid in cols
-			if grid.ground is road and isHitPercentObject objects
+	for row, cols of floor
+		for col, grid of cols
+			if (distanceOfGrid path[0], [row, col]) > 1 and
+			(distanceOfGrid path[path.length - 1], [row, col]) > 1 and
+			isHitPercentObject objects
 				grid.object = {type: getPercentObject objects}
 	floor
 	

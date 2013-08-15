@@ -358,29 +358,34 @@ describe "RandomTownSpec", ->
 	
 	it "随机生成楼层", ->
 		expect(GenerateFloor
-			rows: 2 # default 2
-			cols: 2 # default 2
-			road: 0 # default 0
-			wall: -1 # default -1
-			wallPercent: 0 # default 0
+			rows: 2
+			cols: 2
+			road: 0
+			wall: -1
+			wallPercent: 0
 		).toEqual [
 			[{ground: 0}, {ground: 0}]
 			[{ground: 0}, {ground: 0}]
 		]
 
 		expect(GenerateFloor
-			rows: 2
+			rows: 3
 			cols: 3
 			road: 0
 			wall: -1
-			wallPercent: 1
+			wallPercent: (row, col) ->
+				if row is 0 or col is 0
+				then 1
+				else 0
 		).toEqual [
 			[{ground: -1}, {ground: -1}, {ground: -1}]
-			[{ground: -1}, {ground: -1}, {ground: -1}]
+			[{ground: -1}, {ground: 0}, {ground: 0}]
+			[{ground: -1}, {ground: 0}, {ground: 0}]
 		]
 
 		expect(GenerateFloorObject
 			floor: [
+				[{ground: -1}, {ground: -1}]
 				[{ground: -1}, {ground: -1}]
 				[{ground: -1}, {ground: -1}]
 			]
@@ -389,16 +394,18 @@ describe "RandomTownSpec", ->
 				[1, 0]
 				[1, 1]
 			]
-			road: 0 # default 0
+			road: 0
 			objects:
 				"enemy": 1
 		).toEqual [
-			[{ground: 0, object: {type: "enemy"}}, {ground: -1}]
-			[{ground: 0, object: {type: "enemy"}}, {ground: 0, object: {type: "enemy"}}]
+			[{ground: 0}, {ground: -1}]
+			[{ground: 0}, {ground: 0}]
+			[{ground: -1, object: {type: "enemy"}}, {ground: -1}]
 		]
 
 		expect(GenerateFloorObject
 			floor: [
+				[{ground: -1}, {ground: -1}]
 				[{ground: -1}, {ground: -1}]
 				[{ground: -1}, {ground: -1}]
 			]
@@ -407,10 +414,37 @@ describe "RandomTownSpec", ->
 				[1, 0]
 				[1, 1]
 			]
-			road: 0 # default 0
+			road: 0
 			objects:
 				"enemy": 0
 		).toEqual [
 			[{ground: 0}, {ground: -1}]
 			[{ground: 0}, {ground: 0}]
+			[{ground: -1}, {ground: -1}]
+		]
+
+		expect(GenerateFloorObject
+			floor: [
+				[{ground: -1}, {ground: -1}]
+				[{ground: -1}, {ground: -1}]
+				[{ground: -1}, {ground: -1}]
+				[{ground: -1}, {ground: -1}]
+				[{ground: -1}, {ground: -1}]
+			]
+			path: [
+				[0, 0]
+				[1, 0]
+				[2, 0]
+				[3, 0]
+				[4, 0]
+			]
+			road: 0
+			objects:
+				"door": 1
+		).toEqual [
+			[{ground: 0}, {ground: -1}]
+			[{ground: 0}, {ground: 0}]
+			[{ground: 0}, {ground: 0}]
+			[{ground: 0}, {ground: 0}]
+			[{ground: 0}, {ground: -1}]
 		]
