@@ -325,10 +325,7 @@ describe "RandomTownSpec", ->
 		expect(town.heroLocation).toEqual([0, 1])
 	
 	it "随机生成路径", ->
-		expect(GeneratePath
-			rows: 1
-			cols: 4
-			startLocation: [0, 0]
+		expect(GeneratePath 1, 4, [0, 0]
 		).toEqual [
 			[0, 0]
 			[0, 1]
@@ -336,114 +333,102 @@ describe "RandomTownSpec", ->
 			[0, 3]
 		]
 
-		expect(GeneratePath
-			rows: 1
-			cols: 4
-			startLocation: [0, 0]
-			maxStep: 2
+		expect(GeneratePath 1, 4, [0, 0], 2
 		).toEqual [
 			[0, 0]
 			[0, 1]
 		]
 
-		expect(GeneratePath
-			rows: 3
-			cols: 1
-			startLocation: [2, 0]
-			maxStep: 2
+		expect(GeneratePath 3, 1, [2, 0], 2
 		).toEqual [
 			[2, 0]
 			[1, 0]
 		]
-	
+
+	it "是否为有效位置", ->
+		(expect (isValidFloorLocation 1, 2, [0, 0])).toBe true
+		(expect (isValidFloorLocation 1, 2, [0, 1])).toBe true
+		(expect (isValidFloorLocation 1, 2, [1, 0])).toBe false
+		(expect (isValidFloorLocation 1, 2, [-1, -1])).toBe false
+		(expect (isValidFloorLocation 0, 1, [0, 0])).toBe false
+
+		(expect (getArroundLocation 1, 2, [0, 0])).toEqual [[-1, 0], [1, 0], [0, -1], [0, 1]]
+		(expect (getArroundLocation 1, 2, [1, 0])).toEqual null
+
+		(expect (getArroundLocation 1, 2, [0, 1])).toEqual [[-1, 1], [1, 1], [0, 0], [0, 2]]
+
 	it "随机生成楼层", ->
-		expect(GenerateFloor
-			rows: 2
-			cols: 2
-			road: 0
-			wall: -1
-			wallPercent: 0
+		expect(GenerateFloor 2, 2, 0
 		).toEqual [
 			[{ground: 0}, {ground: 0}]
 			[{ground: 0}, {ground: 0}]
 		]
 
-		expect(GenerateFloor
-			rows: 3
-			cols: 3
-			road: 0
-			wall: -1
-			wallPercent: (row, col) ->
-				if row is 0 or col is 0
-				then 1
-				else 0
+		expect(GenerateFloor 3, 3, (row, col) ->
+			if row is 0 or col is 0 then 1 else 0
 		).toEqual [
 			[{ground: -1}, {ground: -1}, {ground: -1}]
 			[{ground: -1}, {ground: 0}, {ground: 0}]
 			[{ground: -1}, {ground: 0}, {ground: 0}]
 		]
 
-		expect(GenerateFloorObject
-			floor: [
+		(expect GenerateFloorObject [
 				[{ground: -1}, {ground: -1}]
 				[{ground: -1}, {ground: -1}]
 				[{ground: -1}, {ground: -1}]
-			]
-			path: [
+			],
+			[
 				[0, 0]
 				[1, 0]
 				[1, 1]
-			]
-			road: 0
-			objects:
-				"enemy": 1
+			],
+			"enemy": 1
+			"door": 0
 		).toEqual [
 			[{ground: 0}, {ground: -1}]
 			[{ground: 0}, {ground: 0}]
 			[{ground: -1, object: {type: "enemy"}}, {ground: -1}]
 		]
 
-		expect(GenerateFloorObject
-			floor: [
+		(expect GenerateFloorObject [
 				[{ground: -1}, {ground: -1}]
 				[{ground: -1}, {ground: -1}]
 				[{ground: -1}, {ground: -1}]
-			]
-			path: [
+			],
+			[
 				[0, 0]
 				[1, 0]
 				[1, 1]
-			]
-			road: 0
-			objects:
-				"enemy": 0
+			],
+			"enemy": 0
+			"plus": 1
 		).toEqual [
-			[{ground: 0}, {ground: -1}]
-			[{ground: 0}, {ground: 0}]
-			[{ground: -1}, {ground: -1}]
+			[{ground: 0, object: {type: "plus"}}, {ground: -1, object: {type: "plus"}}]
+			[{ground: 0, object: {type: "plus"}}, {ground: 0, object: {type: "plus"}}]
+			[{ground: -1, object: {type: "plus"}}, {ground: -1, object: {type: "plus"}}]
 		]
 
-		expect(GenerateFloorObject
-			floor: [
+		(expect GenerateFloorObject [
 				[{ground: -1}, {ground: -1}]
+				[{ground: -1}, {ground: 0}]
 				[{ground: -1}, {ground: -1}]
+				[{ground: -1}, {ground: 0}]
+				[{ground: -1}, {ground: 0}]
 				[{ground: -1}, {ground: -1}]
-				[{ground: -1}, {ground: -1}]
-				[{ground: -1}, {ground: -1}]
-			]
-			path: [
+			],
+			[
 				[0, 0]
 				[1, 0]
 				[2, 0]
 				[3, 0]
 				[4, 0]
-			]
-			road: 0
-			objects:
-				"door": 1
+				[5, 0]
+			],
+			"door": 1
 		).toEqual [
 			[{ground: 0}, {ground: -1}]
 			[{ground: 0}, {ground: 0}]
+			[{ground: 0, object:{type: "door"}}, {ground: -1}]
 			[{ground: 0}, {ground: 0}]
 			[{ground: 0}, {ground: 0}]
 			[{ground: 0}, {ground: -1}]

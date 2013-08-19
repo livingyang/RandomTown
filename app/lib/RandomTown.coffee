@@ -73,6 +73,27 @@ RandomTown.ObjectHandle = {}
 function GenerateFloor
 ###
 
+rowsOfFloor = (floor) ->
+	if floor instanceof Array then floor.length else 0
+
+colsOfFloor = (floor) ->
+	if floor.length > 0 then floor[0].length else 0
+
+isValidFloorLocation = (rows, cols, location) ->
+	(0 <= location[0] < rows and 0 <= location[1] < cols)
+
+###
+arroundLocation index:
+
+    0
+3  loc  2
+    1
+###
+getArroundLocation = (rows, cols, location) ->
+	if isValidFloorLocation rows, cols, location
+	then ([location[0] + offset[0], location[1] + offset[1]] for offset in [[-1, 0], [1, 0], [0, -1], [0, 1]])
+	else null
+
 isHitPercentObject = (percentObjects) ->
 	notHitPercent = 1
 	for object, percent of percentObjects when 0 <= percent <= 1
@@ -90,53 +111,25 @@ getPercentObject = (percentObjects) ->
 			return object
 	return null
 
-GeneratePath = (options) ->
-	
-	if 0 <= options.startLocation[0] < options.rows and
-	0 <= options.startLocation[1] < options.cols and
-	options.rows * options.cols > 1
-		options.maxStep ?= options.rows * options.cols
-		martix = ((0 for col in [0...options.cols]) for row in [0...options.rows])
-		path = []
-		nextStepSet = [options.startLocation]
-		while path.length < options.maxStep and nextStepSet.length > 0			
+GeneratePath = (rows, cols, startLocation, maxStep) ->
+	if isValidFloorLocation rows, cols, startLocation
+		maxStep ?= rows * cols
+		martix = ((RandomTown.Road for col in [0...cols]) for row in [0...rows])
+		nextStepSet = [startLocation]
+		while maxStep-- > 0 and nextStepSet.length > 0			
 			nextStep = nextStepSet[Math.floor Math.random() * nextStepSet.length]
-			martix[step[0]][step[1]] = -1 for step in nextStepSet
-			path.push nextStep
-			nextStepSet = []
-			for stepOffset in [[1, 0], [0, 1], [-1, 0], [0, -1]]
-				step = [nextStep[0] + stepOffset[0], nextStep[1] + stepOffset[1]]
-				if 0 <= step[0] < options.rows and
-				0 <= step[1] < options.cols and
-				martix[step[0]][step[1]] is 0
-					nextStepSet.push step
-		path
+			martix[step[0]][step[1]] = RandomTown.Wall for step in nextStepSet
+			nextStepSet = (arroundLocation for arroundLocation in getArroundLocation rows, cols, nextStep when (isValidFloorLocation rows, cols, arroundLocation) and martix[arroundLocation[0]][arroundLocation[1]] is RandomTown.Road)
+			nextStep
 	else
-		[options.startLocation]
+		[startLocation]
 
-###
-{number} options.rows default:2
-{number} options.cols default:2
-{number} options.road default:0
-{number} options.wall default:-1
-{number|function(row, col)} options.wallPercent default:0
-###
-GenerateFloor = (options) ->
-	options ?= {}
-	rows = options.rows ? 2
-	cols = options.cols ? 2
-	road = options.road ? 0
-	wall = options.wall ? -1
-	options.wallPercent ?= 0
-	wallPercent = if typeof options.wallPercent is "function"
-	then options.wallPercent
-	else -> options.wallPercent
-	
+GenerateFloor = (rows, cols, wallPercent) ->
 	for row in [0...rows]
 		for col in [0...cols]
-			if Math.random() < wallPercent(row, col)
-			then {ground: wall}
-			else {ground: road}
+			if Math.random() < if typeof wallPercent is "function" then wallPercent(row, col) else wallPercent
+			then {ground: RandomTown.Wall}
+			else {ground: RandomTown.Road}
 
 ###
 路径的出口与入口附近不允许设置任何物体
@@ -144,13 +137,9 @@ GenerateFloor = (options) ->
 {array} options.path default:[] element:[row, col]
 {number} options.road default:0
 {object} options.objects default:{}
-	key: name value: {number|function([[number..3]..3])}
+	key: name value: {number|function(floor, location, startDistance, endDistance)}
 ###
-GenerateFloorObject = (options) ->
-	floor = options.floor ? []
-	path = options.path ? []
-	road = options.road ? 0
-	objects = options.objects ? {}
+GenerateFloorObject = (floor, path, objectsPercent) ->
 
 	distanceOfGrid = (grid1, grid2) ->
 		if grid1? and grid2?
@@ -158,16 +147,22 @@ GenerateFloorObject = (options) ->
 		else undefined
 
 	for step in path
-		floor[step[0]][step[1]].ground = road
+		floor[step[0]][step[1]].ground = RandomTown.Road
 
 	for row, cols of floor
 		for col, grid of cols
-			if (distanceOfGrid path[0], [row, col]) > 1 and
-			(distanceOfGrid path[path.length - 1], [row, col]) > 1 and
-			isHitPercentObject objects
-				grid.object = {type: getPercentObject objects}
+			countObjectsPercent = {}
+			for type, percent of objectsPercent
+				location = [Number(row), Number(col)]
+				countObjectsPercent[type] = RandomTown.ObjectHandle[type]?.getPercent? percent, floor, location, (distanceOfGrid path[0], location), (distanceOfGrid path[path.length - 1], location)
+			grid.object = {type: getPercentObject countObjectsPercent} if isHitPercentObject countObjectsPercent
 	floor
 	
+
+@rowsOfFloor = rowsOfFloor
+@colsOfFloor = colsOfFloor
+@getArroundLocation = getArroundLocation
+@isValidFloorLocation = isValidFloorLocation
 
 @GeneratePath = GeneratePath
 @GenerateFloor = GenerateFloor
@@ -214,6 +209,9 @@ RandomTown.ObjectHandle["hole"] =
 	getSimpleData: (object, ground) ->
 		object.type
 
+	getPercent: (percent, floor, location, startDistance, endDistance) ->
+		0
+
 RandomTown.ObjectHandle["plus"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
 		if object.isUsed is true
@@ -224,6 +222,9 @@ RandomTown.ObjectHandle["plus"] =
 			
 	getSimpleData: (object, ground) ->
 		if object.isUsed is true then ground else object.type
+
+	getPercent: (percent, floor, location, startDistance, endDistance) ->
+		percent
 
 RandomTown.ObjectHandle["key"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
@@ -238,6 +239,9 @@ RandomTown.ObjectHandle["key"] =
 	getSimpleData: (object, ground) ->
 		if object.isPickup is true then ground else object.type
 
+	getPercent: (percent, floor, location, startDistance, endDistance) ->
+		percent
+
 RandomTown.ObjectHandle["door"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
 		if object.isUnlock is true
@@ -249,6 +253,12 @@ RandomTown.ObjectHandle["door"] =
 
 	getSimpleData: (object, ground) ->
 		if object.isUnlock is true then ground else object.type
+
+	getPercent: (percent, floor, location, startDistance, endDistance) ->
+		flags = ((isValidFloorLocation floor.length, floor[0].length, arroundLocation) and floor[arroundLocation[0]][arroundLocation[1]].ground is RandomTown.Road for arroundLocation in getArroundLocation floor.length, floor[0].length, location)
+		if flags[0] is flags[1] and flags[2] is flags[3] and flags[0] isnt flags[2]
+		then percent
+		else 0
 
 RandomTown.ObjectHandle["enemy"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
@@ -267,3 +277,6 @@ RandomTown.ObjectHandle["enemy"] =
 
 	getSimpleData: (object, ground) ->
 		if object.health <= 0 then ground else object.type
+
+	getPercent: (percent, floor, location, startDistance, endDistance) ->
+		if startDistance > 1 and endDistance > 1 then percent else 0
