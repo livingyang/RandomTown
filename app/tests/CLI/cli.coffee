@@ -158,21 +158,9 @@ CommandHandle.reset = (params) ->
 
 		rows = 8
 		cols = 8
-		path = GeneratePath
-			rows: rows
-			cols: cols
-			startLocation: startLocation
+		path = GeneratePath rows, cols, startLocation
 
-		floor = GenerateFloorObject
-				floor: GenerateFloor
-					rows: rows
-					cols: cols
-					road: RandomTown.Road
-					wall: RandomTown.Wall
-					wallPercent: 0.5
-				path: path
-				road: RandomTown.Road
-				objects:
+		floor = GenerateFloorObject (GenerateFloor rows, cols, 1), path,
 					"key": 0.2
 					"door": 0.1
 					"plus": 0.1
