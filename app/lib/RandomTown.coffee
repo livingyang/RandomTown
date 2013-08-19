@@ -131,14 +131,6 @@ GenerateFloor = (rows, cols, wallPercent) ->
 			then {ground: RandomTown.Wall}
 			else {ground: RandomTown.Road}
 
-###
-路径的出口与入口附近不允许设置任何物体
-{array} options.floor default:[] element:[[row, col]...]
-{array} options.path default:[] element:[row, col]
-{number} options.road default:0
-{object} options.objects default:{}
-	key: name value: {number|function(floor, location, startDistance, endDistance)}
-###
 GenerateFloorObject = (floor, path, objectsPercent) ->
 
 	distanceOfGrid = (grid1, grid2) ->
@@ -157,7 +149,49 @@ GenerateFloorObject = (floor, path, objectsPercent) ->
 				countObjectsPercent[type] = RandomTown.ObjectHandle[type]?.getPercent? percent, floor, location, (distanceOfGrid path[0], location), (distanceOfGrid path[path.length - 1], location)
 			grid.object = {type: getPercentObject countObjectsPercent} if isHitPercentObject countObjectsPercent
 	floor
-	
+
+GenerateFloors = (initLocation, floorCount, rows, cols) ->
+	startLocation = initLocation
+
+	floors = for floorIndex in [0...floorCount]
+		path = GeneratePath rows, cols, startLocation
+
+		floor = GenerateFloorObject (GenerateFloor rows, cols, 1), path,
+					"key": 0.2
+					"door": 0.1
+					"plus": 0.1
+					"enemy": 0.1
+
+		for cols in floor
+			for grid in cols
+				switch grid.object?.type
+					when "key"
+						grid.object.color = "yellow"
+					when "door"
+						grid.object.color = "yellow"
+					when "plus"
+						if Math.random() < 0.5
+						then grid.object.attack = 2
+						else grid.object.defense = 2
+					when "enemy"
+						grid.object.health = 100
+						grid.object.attack = 50
+						grid.object.defense = 30
+						grid.object.exp = 10
+						grid.object.money = 10
+
+		floor[startLocation[0]][startLocation[1]].object = 
+			type: "hole"
+			floorIndex: floorIndex - 1
+			location: startLocation
+		startLocation = path[path.length - 1]
+		floor[startLocation[0]][startLocation[1]].object = 
+			type: "hole"
+			floorIndex: floorIndex + 1
+			location: startLocation
+
+		floor
+	floors
 
 @rowsOfFloor = rowsOfFloor
 @colsOfFloor = colsOfFloor
@@ -167,6 +201,7 @@ GenerateFloorObject = (floor, path, objectsPercent) ->
 @GeneratePath = GeneratePath
 @GenerateFloor = GenerateFloor
 @GenerateFloorObject = GenerateFloorObject
+@GenerateFloors = GenerateFloors
 
 ###
 class HeroFight

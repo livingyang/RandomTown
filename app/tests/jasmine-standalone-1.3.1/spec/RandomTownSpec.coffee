@@ -357,7 +357,7 @@ describe "RandomTownSpec", ->
 
 		(expect (getArroundLocation 1, 2, [0, 1])).toEqual [[-1, 1], [1, 1], [0, 0], [0, 2]]
 
-	it "随机生成楼层", ->
+	it "生成随机楼层", ->
 		expect(GenerateFloor 2, 2, 0
 		).toEqual [
 			[{ground: 0}, {ground: 0}]

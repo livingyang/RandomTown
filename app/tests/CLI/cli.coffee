@@ -1,6 +1,7 @@
 readline = require("readline")
 RandomTown = require("../../lib/RandomTown.coffee").RandomTown
 GenerateFloor = require("../../lib/RandomTown.coffee").GenerateFloor
+GenerateFloors = require("../../lib/RandomTown.coffee").GenerateFloors
 GeneratePath = require("../../lib/RandomTown.coffee").GeneratePath
 GenerateFloorObject = require("../../lib/RandomTown.coffee").GenerateFloorObject
 MazeGenerator = require("../../lib/MazeGenerator.coffee").MazeGenerator
@@ -151,6 +152,9 @@ CommandHandle.damage = (params) ->
 	town.getEnemyDamage params?[0], params?[1]
 
 CommandHandle.reset = (params) ->
+	console.log "###"
+	console.log GenerateFloors [0, 0], 4, 8, 8
+	console.log "###"
 
 	initLocation = startLocation = [0, 0]
 
