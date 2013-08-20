@@ -152,53 +152,9 @@ CommandHandle.damage = (params) ->
 	town.getEnemyDamage params?[0], params?[1]
 
 CommandHandle.reset = (params) ->
-	console.log "###"
-	console.log GenerateFloors [0, 0], 4, 8, 8
-	console.log "###"
 
-	initLocation = startLocation = [0, 0]
-
-	floors = for floorIndex in [0...4]
-
-		rows = 8
-		cols = 8
-		path = GeneratePath rows, cols, startLocation
-
-		floor = GenerateFloorObject (GenerateFloor rows, cols, 1), path,
-					"key": 0.2
-					"door": 0.1
-					"plus": 0.1
-					"enemy": 0.1
-
-		for cols in floor
-			for grid in cols
-				switch grid.object?.type
-					when "key"
-						grid.object.color = "yellow"
-					when "door"
-						grid.object.color = "yellow"
-					when "plus"
-						if Math.random() < 0.5
-						then grid.object.attack = 2
-						else grid.object.defense = 2
-					when "enemy"
-						grid.object.health = 100
-						grid.object.attack = 50
-						grid.object.defense = 30
-						grid.object.exp = 10
-						grid.object.money = 10
-
-		floor[startLocation[0]][startLocation[1]].object = 
-			type: "hole"
-			floorIndex: floorIndex - 1
-			location: startLocation
-		startLocation = path[path.length - 1]
-		floor[startLocation[0]][startLocation[1]].object = 
-			type: "hole"
-			floorIndex: floorIndex + 1
-			location: startLocation
-
-		floor
+	initLocation = [0, 0]
+	floors = GenerateFloors 4, 8, 8, initLocation
 
 	town = new RandomTown
 		floors: floors

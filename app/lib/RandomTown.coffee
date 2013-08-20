@@ -150,7 +150,7 @@ GenerateFloorObject = (floor, path, objectsPercent) ->
 			grid.object = {type: getPercentObject countObjectsPercent} if isHitPercentObject countObjectsPercent
 	floor
 
-GenerateFloors = (initLocation, floorCount, rows, cols) ->
+GenerateFloors = (floorCount, rows, cols, initLocation) ->
 	startLocation = initLocation
 
 	floors = for floorIndex in [0...floorCount]
@@ -162,8 +162,8 @@ GenerateFloors = (initLocation, floorCount, rows, cols) ->
 					"plus": 0.1
 					"enemy": 0.1
 
-		for cols in floor
-			for grid in cols
+		for colGrids in floor
+			for grid in colGrids
 				switch grid.object?.type
 					when "key"
 						grid.object.color = "yellow"

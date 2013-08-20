@@ -433,3 +433,11 @@ describe "RandomTownSpec", ->
 			[{ground: 0}, {ground: 0}]
 			[{ground: 0}, {ground: -1}]
 		]
+
+	it "生成多个楼层", ->
+		floors = GenerateFloors 4, 8, 8, [0, 0]
+
+		(expect floors.length).toBe 4
+		(expect floors[0].length).toBe 8
+		(expect floors[0][0].length).toBe 8
+		
