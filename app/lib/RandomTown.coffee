@@ -150,14 +150,16 @@ GenerateFloorObject = (floor, path, objectsPercent) ->
 			grid.object = {type: getPercentObject countObjectsPercent} if isHitPercentObject countObjectsPercent
 	floor
 
-GenerateFloors = (floorCount, rows, cols, initLocation) ->
+GenerateFloors = (floorCount, rows, cols, initLocation, wallPercent) ->
+	
+	wallPercent ?= 1
 	startLocation = initLocation
 
 	floors = for floorIndex in [0...floorCount]
 		path = GeneratePath rows, cols, startLocation
 
-		floor = GenerateFloorObject (GenerateFloor rows, cols, 1), path,
-					"key": 0.2
+		floor = GenerateFloorObject (GenerateFloor rows, cols, wallPercent), path,
+					"key": 0.1
 					"door": 0.1
 					"plus": 0.1
 					"enemy": 0.1

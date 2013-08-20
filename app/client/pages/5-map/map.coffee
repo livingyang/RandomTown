@@ -18,6 +18,65 @@ stopPlayMissionResult = () ->
 
 playMissionResult = (elParent, generator) ->
 
+	rowCount = 11
+	colCount = 11
+	initLocation = [0, 0]
+	floors = GenerateFloors 4, rowCount, colCount, initLocation, (row, col) ->
+		if row % 2 is 0 and col % 2 is 0 then 0.5 else 0.8
+
+	town = new RandomTown
+		floors: floors
+		hero:
+			name: "SuperManXX"
+			attack: 100
+			defense: 80
+			health: 1000
+			exp: 0
+			money: 200
+		heroFloorIndex: 0
+		heroLocation: initLocation
+
+	layerWidth = 320
+	layerHeight = 320
+	gridWidth = layerWidth / colCount
+	gridHeight = layerHeight / rowCount
+
+	layer = new collie.Layer
+		width : layerWidth
+		height : layerHeight
+
+	console.log (cols.join "\t" for cols in town.getSimpleFloors()[0]).join "\n"
+
+	floor = floors[0]
+	mapData = ({backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"} for col in [0...colCount] for row in [0...rowCount])
+
+	map = (new collie.Map gridWidth, gridHeight,
+		useEvent : true
+	).addTo(layer).addObjectTo layer
+
+	map.setMapData mapData
+
+	map.addObject 0, 0, (new collie.Text
+		width: gridWidth
+		height: gridHeight
+		fontColor: "#000000"
+	).text("英雄")
+
+	for tileY, cols of floor
+		for tileX, grid of cols
+			map.addObject tileX, tileY, (new collie.Text
+				width: gridWidth
+				height: gridHeight
+				x: map.getTileIndexToPos(tileX, tileY).x
+				y: map.getTileIndexToPos(tileX, tileY).y
+				fontColor: "#000000"
+			).text(grid.object.type) if grid?.object?.type?
+
+	new collie.FPSConsole().load()
+	collie.Renderer.addLayer layer
+	collie.Renderer.load elParent
+	collie.Renderer.start()
+	return
 	layerWidth = 700
 	layerHeight = 700
 
