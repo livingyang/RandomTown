@@ -1,5 +1,78 @@
 setPageNameToList "map"
 
+# town
+town = new RandomTown
+	floors: [
+		[
+			[{ground: RandomTown.Road}, {ground: RandomTown.Wall}, {ground: RandomTown.Road}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Road}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Wall}]
+		]
+		[
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Road}]
+			[{ground: RandomTown.Road}, {ground: RandomTown.Road}, {ground: RandomTown.Wall}]
+		]
+	]
+	hero:
+		name: "SuperManXX"
+		attack: 100
+		defense: 80
+		health: 1000
+		exp: 0
+		money: 200
+	heroFloorIndex: 0
+	heroLocation: [1, 0]
+
+CommandHandle = {}
+CommandHandle.up = ->
+	town.moveUp()
+	CommandHandle.f()
+
+CommandHandle.down = ->
+	town.moveDown()
+	CommandHandle.f()
+
+CommandHandle.left = ->
+	town.moveLeft()
+	CommandHandle.f()
+
+CommandHandle.right = ->
+	town.moveRight()
+	CommandHandle.f()
+
+CommandHandle.f = (params) ->
+	floorIndex = if params?[0]? and 0 < params[0] <= town.floors.length
+	then Number(params[0]) - 1
+	else town.heroFloorIndex
+
+	floor = town.getSimpleFloors()[floorIndex]
+
+	floor[town.heroLocation[0]][town.heroLocation[1]] = "Hero" if town.heroFloorIndex is floorIndex
+	
+	console.log "floor : #{floorIndex + 1}/#{town.floors.length}\n" + (cols.join "\t" for cols in floor).join "\n"
+
+CommandHandle["ctrl + \\"] = ->
+
+	initLocation = [0, 0]
+	floors = GenerateFloors 4, 8, 8, initLocation
+
+	town = new RandomTown
+		floors: floors
+		hero:
+			name: "SuperManXX"
+			attack: 100
+			defense: 80
+			health: 1000
+			exp: 0
+			money: 200
+		heroFloorIndex: 0
+		heroLocation: initLocation
+
+	CommandHandle.f()
+	
+# functions
+
 getHolderImage = (imageName) ->
 	image = $(document.createElement("img")).attr("data-src" : imageName)
 	Holder.run({
@@ -144,7 +217,19 @@ playMissionResult = (elParent, generator) ->
 	collie.Renderer.load elParent
 	collie.Renderer.start()
 
+Template.map.created = ->
+	KeyboardJS.on "a", ->
+    	console.log "you pressed a!"
+
+    for key, handler of CommandHandle
+    	KeyboardJS.on key, handler
+    
+
 Template.map.destroyed = ->
+	# KeyboardJS.clear "a"
+	for key, handler of CommandHandle
+    	KeyboardJS.clear key
+
 	stopPlayMissionResult()
 
 Template.map.events "click #start" : ->
