@@ -3,4 +3,12 @@
 	<div id="fight"></div>
 	{{> backHome}}
 	<button id="start">start</button>
+
+	{{#each mapControlButtons}}
+		{{> mapControlButton}}
+	{{/each}}
+</template>
+
+<template name="mapControlButton">
+	<button id="{{key}}" class="mapControlButton">{{key}}</button>
 </template>

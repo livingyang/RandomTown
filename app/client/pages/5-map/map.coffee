@@ -185,3 +185,11 @@ Template.map.events "click #start" : ->
 		stopPlayMissionResult()
 	else
 		playMissionResult document.getElementById("fight"), generator
+
+Template.map.events "click .mapControlButton" : ->
+	# console.log @key
+	# console.log CommandHandle[@key]
+	CommandHandle[@key]?()
+
+Template.map.mapControlButtons = ->
+	(key: key for key, func of CommandHandle)

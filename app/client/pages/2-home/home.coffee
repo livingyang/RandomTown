@@ -6,5 +6,4 @@ Template.home.events "click .pageButton" : ->
 	gotoPage this.pageName
 
 Template.home.pageList = ->
-	result = ({pageName: pageName} for pageName in getPageNameList())
-	result
+	({pageName: pageName} for pageName in getPageNameList())
