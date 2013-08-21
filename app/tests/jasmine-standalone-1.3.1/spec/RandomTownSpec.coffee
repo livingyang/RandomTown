@@ -11,13 +11,13 @@ describe "RandomTownSpec", ->
 
 	it "测试创建", ->
 		town = new RandomTown()
-		expect(town).toEqual(jasmine.any(RandomTown))
+		(expect town).toEqual(jasmine.any(RandomTown))
 	
 	it "测试常量", ->
 
-		expect(RandomTown.Wall).toBe(-1)
-		expect(RandomTown.Road).toBe(0)
-		expect(RandomTown.ObjectHandle).toEqual(jasmine.any(Object))
+		(expect RandomTown.Wall).toBe(-1)
+		(expect RandomTown.Road).toBe(0)
+		(expect RandomTown.ObjectHandle).toEqual(jasmine.any(Object))
 
 	it "测试楼层设置", ->
 		floors = []
@@ -34,18 +34,18 @@ describe "RandomTownSpec", ->
 		town = new RandomTown
 			floors : floors
 
-		expect(town.isValidRowAndCol 1, 1).toBe true
-		expect(town.isValidRowAndCol 0, 2).toBe true
-		expect(town.isValidRowAndCol 0, "1").toBe true
-		expect(town.isValidRowAndCol 0, 3).toBe false
-		expect(town.isValidRowAndCol 0).toBe false
+		(expect town.isValidRowAndCol 1, 1).toBe true
+		(expect town.isValidRowAndCol 0, 2).toBe true
+		(expect town.isValidRowAndCol 0, "1").toBe true
+		(expect town.isValidRowAndCol 0, 3).toBe false
+		(expect town.isValidRowAndCol 0).toBe false
 
-		expect(town.floors.length).toBe(2)
-		expect(town.floors[0][0][0].ground).toBe(RandomTown.Wall)
-		expect(town.floors[0][1][0].ground).toBe(RandomTown.Road)
-		expect(town.floors[0][1][0].object.type).toBe("entry")
-		expect(town.floors[0][1][1].object.type).toBe("exit")
-		expect(town.floors[0][1][2].object?).toBe(false)
+		(expect town.floors.length).toBe(2)
+		(expect town.floors[0][0][0].ground).toBe(RandomTown.Wall)
+		(expect town.floors[0][1][0].ground).toBe(RandomTown.Road)
+		(expect town.floors[0][1][0].object.type).toBe("entry")
+		(expect town.floors[0][1][1].object.type).toBe("exit")
+		(expect town.floors[0][1][2].object?).toBe(false)
 
 	it "初始化探索英雄", ->
 		floors = []
@@ -60,15 +60,15 @@ describe "RandomTownSpec", ->
 			heroFloorIndex: 0
 			heroLocation: [1, 0]
 		
-		expect(town.floors[0][1][0].object.type).toBe("entry")
+		(expect town.floors[0][1][0].object.type).toBe("entry")
 		
-		expect(town.hero.name).toBe("SuperManXX")
-		expect(town.hero.attack).toBe(100)
-		expect(town.hero.defense).toBe(80)
-		expect(town.hero.money).toBe(200)
+		(expect town.hero.name).toBe("SuperManXX")
+		(expect town.hero.attack).toBe(100)
+		(expect town.hero.defense).toBe(80)
+		(expect town.hero.money).toBe(200)
 
-		expect(town.heroFloorIndex).toBe(0)
-		expect(town.heroLocation).toEqual([1, 0])
+		(expect town.heroFloorIndex).toBe(0)
+		(expect town.heroLocation).toEqual([1, 0])
 
 	it "使用英雄进行探索", ->
 		floors = []
@@ -99,30 +99,30 @@ describe "RandomTownSpec", ->
 			heroFloorIndex: 0
 			heroLocation: [1, 0]
 
-		expect(town.heroFloorIndex).toBe(0)
-		expect(town.heroLocation).toEqual([1, 0])
+		(expect town.heroFloorIndex).toBe(0)
+		(expect town.heroLocation).toEqual([1, 0])
 
 		town.moveUp()
-		expect(town.heroLocation).toEqual([1, 0])
+		(expect town.heroLocation).toEqual([1, 0])
 		town.moveDown()
 		town.moveLeft()
-		expect(town.heroLocation).toEqual([1, 0])
+		(expect town.heroLocation).toEqual([1, 0])
 
 		town.moveRight()
-		expect(town.heroFloorIndex).toBe(0)
-		expect(town.heroLocation).toEqual([1, 1])
+		(expect town.heroFloorIndex).toBe(0)
+		(expect town.heroLocation).toEqual([1, 1])
 
 		town.moveRight()
-		expect(town.heroFloorIndex).toBe(1)
-		expect(town.heroLocation).toEqual([1, 2])
+		(expect town.heroFloorIndex).toBe(1)
+		(expect town.heroLocation).toEqual([1, 2])
 
 		town.moveLeft()
-		expect(town.heroFloorIndex).toBe(1)
-		expect(town.heroLocation).toEqual([1, 1])
+		(expect town.heroFloorIndex).toBe(1)
+		(expect town.heroLocation).toEqual([1, 1])
 
 		town.moveRight()
-		expect(town.heroFloorIndex).toBe(0)
-		expect(town.heroLocation).toEqual([1, 1])
+		(expect town.heroFloorIndex).toBe(0)
+		(expect town.heroLocation).toEqual([1, 1])
 
 	it "测试改变hero属性", ->
 		town = new RandomTown
@@ -131,13 +131,13 @@ describe "RandomTownSpec", ->
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
 
-		expect(town.hero.attack).toBe 100
-		expect(town.hero.money).toBe 200
+		(expect town.hero.attack).toBe 100
+		(expect town.hero.money).toBe 200
 		town.changeHeroProperty
 			money: -10
 			attack: +5
-		expect(town.hero.attack).toBe 105
-		expect(town.hero.money).toBe 190
+		(expect town.hero.attack).toBe 105
+		(expect town.hero.money).toBe 190
 
 	it "测试plus对象", ->
 		floors = []
@@ -156,20 +156,29 @@ describe "RandomTownSpec", ->
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 1]
-
-		expect(town.hero.attack).toBe(100)
-		expect(town.hero.exp).toBe(0)
+		
+		(expect town.isExistObject 0, 0).toBe(false)
+		
+		(expect town.hero.attack).toBe(100)
+		(expect town.hero.exp).toBe(0)
+		(expect floors[0][1][1].object.isUsed).not.toBe(true)
+		(expect town.isExistObject 1, 1).toBe(true)
+		
 		town.moveDown()
-		expect(town.heroLocation).toEqual([0, 1])
-		expect(town.hero.attack).toBe(102)
-		expect(town.hero.exp).toBe(10)
-		expect(town.hero.errorProperty?).toBe(false)
+
+		(expect floors[0][1][1].object.isUsed).toBe(true)
+		(expect town.isExistObject 1, 1).toBe(false)
+		(expect town.heroLocation).toEqual([0, 1])
+		(expect town.hero.attack).toBe(102)
+		(expect town.hero.exp).toBe(10)
+		(expect town.hero.errorProperty?).toBe(false)
 
 		town.moveDown()
-		expect(town.heroLocation).toEqual([1, 1])
-		expect(town.hero.attack).toBe(102)
-		expect(town.hero.exp).toBe(10)
-		expect(town.hero.errorProperty?).toBe(false)
+
+		(expect town.heroLocation).toEqual([1, 1])
+		(expect town.hero.attack).toBe(102)
+		(expect town.hero.exp).toBe(10)
+		(expect town.hero.errorProperty?).toBe(false)
 	
 	it "测试钥匙与门对象", ->
 		floors = []
@@ -190,21 +199,30 @@ describe "RandomTownSpec", ->
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
 
-		expect(town.heroLocation).toEqual([0, 0])
+		(expect town.heroLocation).toEqual [0, 0]
 		town.moveDown()
-		expect(town.heroLocation).toEqual([0, 0])
 
+		# pick up key
+		(expect town.heroLocation).toEqual [0, 0]
+		(expect town.isExistObject 0, 1).toBe true
+		(expect town.floors[0][0][1].object.isPickup).not.toBe true
 		town.moveRight()
-		expect(town.heroLocation).toEqual([0, 0])
+		(expect town.isExistObject 0, 1).toBe false
+		(expect town.floors[0][0][1].object.isPickup).toBe true
+		(expect town.heroLocation).toEqual [0, 0]
 		town.moveRight()
-		expect(town.heroLocation).toEqual([0, 1])
+		(expect town.heroLocation).toEqual [0, 1]
 
 		town.moveLeft()
-		expect(town.heroLocation).toEqual([0, 0])
+
+		# open the door
+		(expect town.isExistObject 1, 0).toBe true
+		(expect town.heroLocation).toEqual [0, 0]
 		town.moveDown()
-		expect(town.heroLocation).toEqual([0, 0])
+		(expect town.isExistObject 1, 0).toBe false
+		(expect town.heroLocation).toEqual [0, 0]
 		town.moveDown()
-		expect(town.heroLocation).toEqual([1, 0])
+		(expect town.heroLocation).toEqual [1, 0]
 
 	it "生成简易地图数据", ->
 		floors = []
@@ -219,7 +237,7 @@ describe "RandomTownSpec", ->
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
 
-		expect(town.getSimpleFloors()).toEqual [
+		(expect town.getSimpleFloors()).toEqual [
 			[
 				["0", "0"]
 				["0", "0"]
@@ -236,21 +254,21 @@ describe "RandomTownSpec", ->
 			type: "plus"
 			attack: 2
 
-		expect(town.getSimpleFloors()).toEqual [
+		(expect town.getSimpleFloors()).toEqual [
 			[
 				["0", "key"]
 				["door", "plus"]
 			]
 		]
 		town.moveRight()
-		expect(town.getSimpleFloors()).toEqual [
+		(expect town.getSimpleFloors()).toEqual [
 			[
 				["0", "0"]
 				["door", "plus"]
 			]
 		]
 		town.moveDown()
-		expect(town.getSimpleFloors()).toEqual [
+		(expect town.getSimpleFloors()).toEqual [
 			[
 				["0", "0"]
 				["0", "plus"]
@@ -258,7 +276,7 @@ describe "RandomTownSpec", ->
 		]
 		town.moveDown()
 		town.moveRight()
-		expect(town.getSimpleFloors()).toEqual [
+		(expect town.getSimpleFloors()).toEqual [
 			[
 				["0", "0"]
 				["0", "0"]
@@ -281,17 +299,17 @@ describe "RandomTownSpec", ->
 			defenser: defenser
 			maxTurnCount: 100
 
-		expect(heroFight.maxTurnCount).toBe(100)
-		expect(heroFight.attacker.attack).toBe(100)
-		expect(heroFight.attacker.defense).toBe(80)
-		expect(heroFight.defenser.attack).toBe(100)
-		expect(heroFight.defenser.defense).toBe(70)
+		(expect heroFight.maxTurnCount).toBe(100)
+		(expect heroFight.attacker.attack).toBe(100)
+		(expect heroFight.attacker.defense).toBe(80)
+		(expect heroFight.defenser.attack).toBe(100)
+		(expect heroFight.defenser.defense).toBe(70)
 
-		expect(heroFight.attacker.health).toBe(100)
-		expect(heroFight.defenser.health).toBe(-20)
+		(expect heroFight.attacker.health).toBe(100)
+		(expect heroFight.defenser.health).toBe(-20)
 
-		expect(attacker.health).toBe(120)
-		expect(defenser.health).toBe(40)
+		(expect attacker.health).toBe(120)
+		(expect defenser.health).toBe(40)
 
 	it "测试敌人", ->
 		floors = []
@@ -313,19 +331,19 @@ describe "RandomTownSpec", ->
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
 
-		expect(town.getEnemyDamage 0, 1).toEqual 20
+		(expect town.getEnemyDamage 0, 1).toEqual 20
 
-		expect(town.hero.exp).toBe 0
-		expect(town.hero.money).toBe 200
+		(expect town.hero.exp).toBe 0
+		(expect town.hero.money).toBe 200
 		town.moveRight()
-		expect(town.hero.exp).toBe 10
-		expect(town.hero.money).toBe 210
-		expect(town.heroLocation).toEqual([0, 0])
+		(expect town.hero.exp).toBe 10
+		(expect town.hero.money).toBe 210
+		(expect town.heroLocation).toEqual([0, 0])
 		town.moveRight()
-		expect(town.heroLocation).toEqual([0, 1])
+		(expect town.heroLocation).toEqual([0, 1])
 	
 	it "随机生成路径", ->
-		expect(GeneratePath 1, 4, [0, 0]
+		(expect GeneratePath 1, 4, [0, 0]
 		).toEqual [
 			[0, 0]
 			[0, 1]
@@ -333,13 +351,13 @@ describe "RandomTownSpec", ->
 			[0, 3]
 		]
 
-		expect(GeneratePath 1, 4, [0, 0], 2
+		(expect GeneratePath 1, 4, [0, 0], 2
 		).toEqual [
 			[0, 0]
 			[0, 1]
 		]
 
-		expect(GeneratePath 3, 1, [2, 0], 2
+		(expect GeneratePath 3, 1, [2, 0], 2
 		).toEqual [
 			[2, 0]
 			[1, 0]
@@ -358,13 +376,13 @@ describe "RandomTownSpec", ->
 		(expect (getArroundLocation 1, 2, [0, 1])).toEqual [[-1, 1], [1, 1], [0, 0], [0, 2]]
 
 	it "生成随机楼层", ->
-		expect(GenerateFloor 2, 2, 0
+		(expect GenerateFloor 2, 2, 0
 		).toEqual [
 			[{ground: 0}, {ground: 0}]
 			[{ground: 0}, {ground: 0}]
 		]
 
-		expect(GenerateFloor 3, 3, (row, col) ->
+		(expect GenerateFloor 3, 3, (row, col) ->
 			if row is 0 or col is 0 then 1 else 0
 		).toEqual [
 			[{ground: -1}, {ground: -1}, {ground: -1}]
@@ -440,4 +458,4 @@ describe "RandomTownSpec", ->
 		(expect floors.length).toBe 4
 		(expect floors[0].length).toBe 8
 		(expect floors[0][0].length).toBe 8
-		
+			

@@ -43,6 +43,11 @@ class RandomTown
 				return @hero.health - heroFight.attacker.health
 		0
 
+	isExistObject: (row, col, floorIndex) ->
+		floorIndex ?= @heroFloorIndex
+		grid = @getFloorGrid (@getFloor floorIndex), row, col
+		grid?.object?.type? and RandomTown.ObjectHandle[grid.object.type].isVisible grid.object, grid.ground
+
 	moveHandle: (row, col) ->
 		if @isValidRowAndCol row, col
 			grid = @getFloorGrid @getCurFloor(), row, col			
@@ -249,6 +254,9 @@ RandomTown.ObjectHandle["hole"] =
 	getPercent: (percent, floor, location, startDistance, endDistance) ->
 		0
 
+	isVisible: (object, ground) ->
+		true
+
 RandomTown.ObjectHandle["plus"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
 		if object.isUsed is true
@@ -262,6 +270,9 @@ RandomTown.ObjectHandle["plus"] =
 
 	getPercent: (percent, floor, location, startDistance, endDistance) ->
 		percent
+
+	isVisible: (object, ground) ->
+		not object.isUsed and ground is RandomTown.Road
 
 RandomTown.ObjectHandle["key"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
@@ -278,6 +289,9 @@ RandomTown.ObjectHandle["key"] =
 
 	getPercent: (percent, floor, location, startDistance, endDistance) ->
 		percent
+
+	isVisible: (object, ground) ->
+		not object.isPickup and ground is RandomTown.Road
 
 RandomTown.ObjectHandle["door"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
@@ -296,6 +310,9 @@ RandomTown.ObjectHandle["door"] =
 		if flags[0] is flags[1] and flags[2] is flags[3] and flags[0] isnt flags[2]
 		then percent
 		else 0
+
+	isVisible: (object, ground) ->
+		not object.isUnlock and ground is RandomTown.Road
 
 RandomTown.ObjectHandle["enemy"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
@@ -317,3 +334,6 @@ RandomTown.ObjectHandle["enemy"] =
 
 	getPercent: (percent, floor, location, startDistance, endDistance) ->
 		if startDistance > 1 and endDistance > 1 then percent else 0
+
+	isVisible: (object, ground) ->
+		object.health > 0 and ground is RandomTown.Road

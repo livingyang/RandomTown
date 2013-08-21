@@ -42,6 +42,9 @@ CommandHandle.right = ->
 	CommandHandle.f()
 
 CommandHandle.f = (params) ->
+
+	drawMap town.getCurFloor(), town.heroLocation, collie.Renderer.getLayers()[0]
+
 	floorIndex = if params?[0]? and 0 < params[0] <= town.floors.length
 	then Number(params[0]) - 1
 	else town.heroFloorIndex
@@ -89,6 +92,41 @@ stopPlayMissionResult = () ->
 	collie.Renderer.unload()
 	collie.Timer.removeAll()
 
+drawMap = (floor, heroLocation, layer) ->
+
+	layer.removeChildren layer.getChildren()
+
+	gridWidth = layer.get("width") / floor[0].length
+	gridHeight = layer.get("height") / floor.length
+
+	mapData = ({backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"} for col in [0...floor[0].length] for row in [0...floor.length])
+
+	map = (new collie.Map gridWidth, gridHeight,
+		useEvent : true
+	).addTo(layer).addObjectTo layer
+
+	map.setMapData mapData
+
+	heroTileX = heroLocation[1]
+	heroTileY = heroLocation[0]
+	map.addObject heroTileX, heroTileY, (new collie.Text
+		width: gridWidth
+		height: gridHeight
+		x: map.getTileIndexToPos(heroTileX, heroTileY).x
+		y: map.getTileIndexToPos(heroTileX, heroTileY).y
+		fontColor: "#000000"
+	).text("英雄")
+
+	for tileY, cols of floor
+		for tileX, grid of cols
+			map.addObject tileX, tileY, (new collie.Text
+				width: gridWidth
+				height: gridHeight
+				x: map.getTileIndexToPos(tileX, tileY).x
+				y: map.getTileIndexToPos(tileX, tileY).y
+				fontColor: "#000000"
+			).text(grid.object.type) if grid?.object?.type? and town.isExistObject Number(tileY), Number(tileX)
+
 playMissionResult = (elParent, generator) ->
 
 	rowCount = 11
@@ -111,111 +149,17 @@ playMissionResult = (elParent, generator) ->
 
 	layerWidth = 320
 	layerHeight = 320
-	gridWidth = layerWidth / colCount
-	gridHeight = layerHeight / rowCount
 
 	layer = new collie.Layer
 		width : layerWidth
 		height : layerHeight
-
-	console.log (cols.join "\t" for cols in town.getSimpleFloors()[0]).join "\n"
-
-	floor = floors[0]
-	mapData = ({backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"} for col in [0...colCount] for row in [0...rowCount])
-
-	map = (new collie.Map gridWidth, gridHeight,
-		useEvent : true
-	).addTo(layer).addObjectTo layer
-
-	map.setMapData mapData
-
-	map.addObject 0, 0, (new collie.Text
-		width: gridWidth
-		height: gridHeight
-		fontColor: "#000000"
-	).text("英雄")
-
-	for tileY, cols of floor
-		for tileX, grid of cols
-			map.addObject tileX, tileY, (new collie.Text
-				width: gridWidth
-				height: gridHeight
-				x: map.getTileIndexToPos(tileX, tileY).x
-				y: map.getTileIndexToPos(tileX, tileY).y
-				fontColor: "#000000"
-			).text(grid.object.type) if grid?.object?.type?
 
 	new collie.FPSConsole().load()
 	collie.Renderer.addLayer layer
 	collie.Renderer.load elParent
 	collie.Renderer.start()
-	return
-	layerWidth = 700
-	layerHeight = 700
-
-	gridWidth = layerWidth / generator.cols
-	gridHeight = layerHeight / generator.rows
-	gridSize = "#{gridWidth}x#{gridHeight}"
-
-	collie.ImageManager.add
-		road : getHolderImage("holder.js/#{gridSize}/#aaa:#fff/text: ")
-		block : getHolderImage("holder.js/#{gridSize}/#555:#fff/text: ")
-		role : getHolderImage("holder.js/#{gridSize}/#f00:#fff/text: ")
-
-	layer = new collie.Layer
-		width : layerWidth
-		height : layerHeight
-
-	rowLength = 20
-	colLength = 20
-	objectCount = 10
-	tileSize = 30 # px
-	mapData = []
-	row = 0
-
-	while row < rowLength
-	  rowData = []
-	  col = 0
-
-	  while col < colLength
-	    rowData.push backgroundColor: (if Math.random() > 0.5 then "red" else "yellow") # A Tile data doesn't necessary to contain dimension and position.
-	    col++
-	  mapData.push rowData
-	  row++
-
-	# Create a Map instance
-	map = new collie.Map(tileSize, tileSize,
-	  useEvent: true
-	  useLiveUpdate: false
-	).addTo(layer).addObjectTo(layer)
-
-	# Add a mapdata.
-	map.setMapData mapData
-
-	# Add objects for display on the map.
-	i = 0
-
-	while i < objectCount
-	  tileX = Math.round(Math.random() * (colLength - 1))
-	  tileY = Math.round(Math.random() * (rowLength - 1))
-	  pos = map.getTileIndexToPos(tileX, tileY)
-	  map.addObject tileX, tileY, new collie.DisplayObject(
-	    x: pos.x + 5
-	    y: pos.y + 5
-	    width: tileSize - 10
-	    height: tileSize - 10
-	    backgroundColor: "blue"
-	  )
-	  i++
-
-	# Attach a event handler.
-	map.attach mapclick: (e) ->
-	  console.log e.tileX, e.tileY
-
-	new collie.FPSConsole().load();
-	collie.Renderer.addLayer layer
-	collie.Renderer.load elParent
-	collie.Renderer.start()
+	
+	drawMap town.getCurFloor(), town.heroLocation, collie.Renderer.getLayers()[0]
 
 Template.map.created = ->
 	KeyboardJS.on "a", ->
