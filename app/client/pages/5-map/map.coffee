@@ -1,29 +1,24 @@
 setPageNameToList "map"
 
-Template.map.created = ->
-	KeyboardJS.on "a", ->
-    	console.log "you pressed a!"
+controller = null
 
-    for key, handler of CommandHandle
-    	KeyboardJS.on key, handler
-    
+Template.map.created = ->
+
+Template.map.rendered = ->
+	controller = new RandomTownController()
+	controller.playMissionResult document.getElementById "fight"
+	# playMissionResult document.getElementById("fight")
 
 Template.map.destroyed = ->
-	for key, handler of CommandHandle
-    	KeyboardJS.clear key
-
-	stopPlayMissionResult()
-
-Template.map.events "click #start" : ->
-	if isPlayingMission()
-		stopPlayMissionResult()
-	else
-		playMissionResult document.getElementById("fight")
+	controller.stopPlay()
+	controller = null
+	# stopPlayMissionResult()
 
 Template.map.events "click .mapControlButton" : ->
 	# console.log @key
 	# console.log CommandHandle[@key]
-	CommandHandle[@key]?()
+	# CommandHandle[@key]?()
+	controller.keyboardHandle[@key]?()
 
 Template.map.mapControlButtons = ->
-	(key: key for key, func of CommandHandle)
+	(key: key for key, func of controller?.keyboardHandle or [])
