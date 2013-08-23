@@ -1,18 +1,9 @@
 
 class RandomTownController
-	constructor: (options) ->
-		# @town = new RandomTown
-		# 	floors: GenerateFloors options.floorCount, options.rows, options.cols, options.initLocation
-		# 	hero: options.hero
-		# 	heroFloorIndex: options.heroFloorIndex
-		# 	heroLocation: options.initLocation
 
-		# KeyboardJS.on "up", =>
-		# 	@town.moveUp()
-		# KeyboardJS.on "down", => @town.moveDown()
-		# KeyboardJS.on "left", => @town.moveLeft()
-		# KeyboardJS.on "right", => @town.moveRight()
+	@getInstance: => @instance ?= new this
 
+	constructor: ->
 		@keyboardHandle =
 			"up": =>
 				@town.moveUp()
@@ -29,6 +20,7 @@ class RandomTownController
 
 			"f": =>
 				@drawMap @town.getCurFloor(), @town.heroLocation, collie.Renderer.getLayers()[0]
+
 
 	drawMap: (floor, heroLocation, layer) ->
 
@@ -65,29 +57,20 @@ class RandomTownController
 					fontColor: "#000000"
 				).text(grid.object.type) if grid?.object?.type? and @town.isExistObject Number(tileY), Number(tileX)
 
-	playMissionResult: (elParent) ->
-		# console.log CommandHandle
-		
+	startGame: (options) ->
+
+		if not options.divElement?
+			return
+
 		for key, handler of @keyboardHandle
 			KeyboardJS.on key, handler
 
-		rowCount = 11
-		colCount = 11
-		initLocation = [0, 0]
-		floors = GenerateFloors 4, rowCount, colCount, initLocation, (row, col) ->
-			if row % 2 is 0 and col % 2 is 0 then 0.5 else 0.8
-
 		@town = new RandomTown
-			floors: floors
-			hero:
-				name: "SuperManXX"
-				attack: 100
-				defense: 80
-				health: 1000
-				exp: 0
-				money: 200
-			heroFloorIndex: 0
-			heroLocation: initLocation
+			floors: GenerateFloors options.floorCount, options.rows, options.cols, options.initLocation, (row, col) ->
+				if row % 2 is 0 and col % 2 is 0 then 0.5 else 0.8
+			hero: options.hero
+			heroFloorIndex: options.heroFloorIndex
+			heroLocation: options.initLocation
 
 		layerWidth = 320
 		layerHeight = 320
@@ -98,7 +81,7 @@ class RandomTownController
 
 		new collie.FPSConsole().load()
 		collie.Renderer.addLayer layer
-		collie.Renderer.load elParent
+		collie.Renderer.load options.divElement
 		collie.Renderer.start()
 		
 		@drawMap @town.getCurFloor(), @town.heroLocation, collie.Renderer.getLayers()[0]
@@ -106,7 +89,7 @@ class RandomTownController
 	isPlaying: ->
 		collie.Renderer.isPlaying()
 
-	stopPlay: ->
+	stopGame: ->
 		if @isPlaying()
 			for key, handler of @keyboardHandle
 				KeyboardJS.clear key
