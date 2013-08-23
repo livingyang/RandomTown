@@ -1,8 +1,5 @@
 setPageNameToList "town"
 
-# Deps.autorun (c) ->
-	# RandomTownController.getInstance().stopGame()
-
 Template.town.rendered = ->
 
 Template.town.destroyed = ->
