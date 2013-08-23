@@ -1,0 +1,33 @@
+<template name="town">
+	<h3>town</h3>
+
+	{{#constant}}
+	<div id="fight"></div>
+	{{/constant}}
+
+	{{> backHome}}
+
+	<button id="start">Start</button>
+
+	{{#if hasHero}}
+		{{> hero}}
+
+		{{#each mapControlButtons}}
+			{{> mapControlButton}}
+		{{/each}}
+	{{/if}}
+
+</template>
+
+<template name="mapControlButton">
+	<button id="{{key}}" class="mapControlButton">{{key}}</button>
+</template>
+
+<template name="hero">
+	<p>生命: {{hero.health}}</p>
+	<p>攻击: {{hero.attack}}</p>
+	<p>防御: {{hero.defense}}</p>
+	<p>经验: {{hero.exp}}</p>
+	<p>金币: {{hero.money}}</p>
+	<p>黄钥匙: {{hero.key.yellow}}</p>
+</template>

@@ -20,6 +20,9 @@ class RandomTownController
 
 			"f": =>
 				@drawMap @town.getCurFloor(), @town.heroLocation, collie.Renderer.getLayers()[0]
+				Session.set "hero", @town.hero
+			"h": =>
+				console.log @town.hero
 
 
 	drawMap: (floor, heroLocation, layer) ->
@@ -90,6 +93,8 @@ class RandomTownController
 		collie.Renderer.isPlaying()
 
 	stopGame: ->
+		Session.set "hero", null
+		
 		if @isPlaying()
 			for key, handler of @keyboardHandle
 				KeyboardJS.clear key
@@ -98,6 +103,7 @@ class RandomTownController
 			collie.Renderer.removeAllLayer()
 			collie.Renderer.unload()
 			collie.Timer.removeAll()
+
 
 @RandomTownController = RandomTownController
 
