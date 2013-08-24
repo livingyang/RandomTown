@@ -36,3 +36,10 @@ Template.town.hasHero = ->
 
 Template.hero.hero = ->
 	Session.get "hero"
+
+Template.town.lastEnemy = ->
+	(Session.get "lastEnemy")?
+
+Template.enemy.enemy = ->
+	Session.get "lastEnemy"
+	

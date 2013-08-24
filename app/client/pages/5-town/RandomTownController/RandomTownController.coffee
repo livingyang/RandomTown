@@ -21,15 +21,12 @@ class RandomTownController
 			"f": =>
 				@drawMap @town.getCurFloor(), @town.heroLocation, collie.Renderer.getLayers()[0]
 				Session.set "hero", @town.hero
-			"h": =>
-				console.log @town.hero
-
 
 	drawMap: (floor, heroLocation, layer) ->
 
-		collie.ImageManager.add "hero", "monster/01.png"
+		collie.ImageManager.add "hero", "011-Braver01.png"
 		collie.ImageManager.add "map", "203-other03.png"
-		collie.ImageManager.add "road", "road.png"
+		collie.ImageManager.add "road", "road2.png"
 		collie.ImageManager.add "wall", "wall.png"
 		# collie.ImageManager.add "sample", "item/plus.png"
 		# collie.ImageManager.addSprite "sample",

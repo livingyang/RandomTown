@@ -1,4 +1,4 @@
-setPageNameToList "mission"
+# setPageNameToList "mission"
 
 getHolderImage = (imageName) ->
 	image = $(document.createElement("img")).attr("data-src" : imageName)
