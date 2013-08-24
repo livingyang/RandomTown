@@ -27,17 +27,46 @@ class RandomTownController
 
 	drawMap: (floor, heroLocation, layer) ->
 
-		# collie.ImageManager.add "hero", "monster/01.png"
-		collie.ImageManager.add "sample", "item/plus.png"
-		collie.ImageManager.addSprite "sample",
-			hero: [0, 32]
+		collie.ImageManager.add "hero", "monster/01.png"
+		collie.ImageManager.add "map", "203-other03.png"
+		collie.ImageManager.add "road", "road.png"
+		collie.ImageManager.add "wall", "wall.png"
+		# collie.ImageManager.add "sample", "item/plus.png"
+		# collie.ImageManager.addSprite "sample",
+		# 	hero: [0, 32]
+
+		#  hole
+		collie.ImageManager.add "hole", "hole1.png"
+		
+		# enemy
+		collie.ImageManager.add "enemy", "monster/01.png"
+
+		# plus
+		collie.ImageManager.add "plus", "103-item03.png"
+		collie.ImageManager.addSprite "plus",
+			plus: [0, 0]
+
+		# key
+		collie.ImageManager.add "key", "101-item01.png"
+		collie.ImageManager.addSprite "key",
+			key: [0, 0]
+		
+		# door
+		collie.ImageManager.add "door", "202-other02.png"
+		collie.ImageManager.addSprite "door",
+			door: [0, 0]
 
 		layer.removeChildren layer.getChildren()
 
-		gridWidth = layer.get("width") / floor[0].length
-		gridHeight = layer.get("height") / floor.length
+		gridWidth = 32
+		gridHeight = 32
 
-		mapData = ({backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"} for col in [0...floor[0].length] for row in [0...floor.length])
+		# mapData = ({backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"} for col in [0...floor[0].length] for row in [0...floor.length])
+		mapData = for row in [0...floor.length]
+			for col in [0...floor[0].length]
+				# backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"
+				# spriteX: if floor[row][col].ground is RandomTown.Road then 2 else 1
+				backgroundImage: if floor[row][col].ground is RandomTown.Road then "road" else "wall"
 
 		map = (new collie.Map gridWidth, gridHeight,
 			useEvent : true
@@ -45,33 +74,26 @@ class RandomTownController
 
 		map.setMapData mapData
 
+		for tileY, cols of floor
+			for tileX, grid of cols				
+				if grid?.object?.type? and @town.isExistObject Number(tileY), Number(tileX)	
+					map.addObject tileX, tileY, new collie.DisplayObject
+						width: gridWidth
+						height: gridHeight
+						x: map.getTileIndexToPos(tileX, tileY).x
+						y: map.getTileIndexToPos(tileX, tileY).y
+						backgroundImage: grid.object.type
+						
 		heroTileX = heroLocation[1]
 		heroTileY = heroLocation[0]
-		# map.addObject heroTileX, heroTileY, (new collie.Text
-		# 	width: gridWidth
-		# 	height: gridHeight
-		# 	x: map.getTileIndexToPos(heroTileX, heroTileY).x
-		# 	y: map.getTileIndexToPos(heroTileX, heroTileY).y
-		# 	fontColor: "#000000"
-		# ).text("英雄")
-
 		map.addObject heroTileX, heroTileY, new collie.DisplayObject
 			width: gridWidth
 			height: gridHeight
 			x: map.getTileIndexToPos(heroTileX, heroTileY).x
 			y: map.getTileIndexToPos(heroTileX, heroTileY).y
-			backgroundImage: "sample"
-			spriteSheet: "hero"
-
-		for tileY, cols of floor
-			for tileX, grid of cols
-				map.addObject tileX, tileY, (new collie.Text
-					width: gridWidth
-					height: gridHeight
-					x: map.getTileIndexToPos(tileX, tileY).x
-					y: map.getTileIndexToPos(tileX, tileY).y
-					fontColor: "#000000"
-				).text(grid.object.type) if grid?.object?.type? and @town.isExistObject Number(tileY), Number(tileX)
+			# backgroundImage: "sample"
+			# spriteSheet: "hero"
+			backgroundImage: "hero"
 
 	startGame: (options) ->
 
@@ -88,8 +110,8 @@ class RandomTownController
 			heroFloorIndex: options.heroFloorIndex
 			heroLocation: options.initLocation
 
-		layerWidth = 400
-		layerHeight = 400
+		layerWidth = 32 * options.cols
+		layerHeight = 32 * options.rows
 
 		layer = new collie.Layer
 			width : layerWidth

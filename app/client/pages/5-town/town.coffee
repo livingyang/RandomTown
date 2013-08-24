@@ -7,7 +7,6 @@ Template.town.destroyed = ->
 
 Template.town.events "click .mapControlButton" : ->
 	RandomTownController.getInstance().keyboardHandle[@key]?()
-	# Session.set "hero", RandomTownController.getInstance().town.hero
 
 Template.town.events "click #start" : ->
 	RandomTownController.getInstance().startGame
@@ -24,6 +23,8 @@ Template.town.events "click #start" : ->
 			health: 1000
 			exp: 0
 			money: 200
+			key:
+				yellow: 1
 
 	Session.set "hero", RandomTownController.getInstance().town.hero if RandomTownController.getInstance()?.town?.hero?
 
