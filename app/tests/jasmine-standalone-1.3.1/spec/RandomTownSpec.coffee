@@ -151,11 +151,21 @@ describe "RandomTownSpec", ->
 			exp: 10
 			errorProperty: 10
 
+		delegate =
+			onHeroMove: (oldLocation, newLocation, direction) ->
+			onUsePlus: (plusLocation) ->
+			onHeroChanged: ->
+
+		spyOn delegate, "onHeroMove"
+		spyOn delegate, "onUsePlus"
+		spyOn delegate, "onHeroChanged"
+
 		town = new RandomTown
 			floors: floors
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 1]
+			delegate: delegate
 		
 		(expect town.isExistObject 0, 0).toBe(false)
 		
@@ -166,6 +176,9 @@ describe "RandomTownSpec", ->
 		
 		town.moveDown()
 
+		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 1], [0, 1], "down"]
+		(expect delegate.onUsePlus.mostRecentCall.args).toEqual [[1, 1]]
+		(expect delegate.onHeroChanged.calls.length).toBe 1
 		(expect floors[0][1][1].object.isUsed).toBe(true)
 		(expect town.isExistObject 1, 1).toBe(false)
 		(expect town.heroLocation).toEqual([0, 1])
@@ -193,11 +206,23 @@ describe "RandomTownSpec", ->
 			type: "door"
 			color: "yellow"
 
+		delegate =
+			onHeroMove: (oldLocation, newLocation, direction) ->
+			onPickupKey: (keyLocation) ->
+			onOpenDoor: (doorLocation) ->
+			onHeroChanged: ->
+
+		spyOn delegate, "onHeroMove"
+		spyOn delegate, "onPickupKey"
+		spyOn delegate, "onOpenDoor"
+		spyOn delegate, "onHeroChanged"
+
 		town = new RandomTown
 			floors: floors
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
+			delegate: delegate
 
 		(expect town.heroLocation).toEqual [0, 0]
 		town.moveDown()
@@ -206,7 +231,11 @@ describe "RandomTownSpec", ->
 		(expect town.heroLocation).toEqual [0, 0]
 		(expect town.isExistObject 0, 1).toBe true
 		(expect town.floors[0][0][1].object.isPickup).not.toBe true
+		
 		town.moveRight()
+		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "right"]
+		(expect delegate.onPickupKey.mostRecentCall.args).toEqual [[0, 1]]
+		(expect delegate.onHeroChanged.calls.length).toBe 1
 		(expect town.isExistObject 0, 1).toBe false
 		(expect town.floors[0][0][1].object.isPickup).toBe true
 		(expect town.heroLocation).toEqual [0, 0]
@@ -218,7 +247,11 @@ describe "RandomTownSpec", ->
 		# open the door
 		(expect town.isExistObject 1, 0).toBe true
 		(expect town.heroLocation).toEqual [0, 0]
+		
 		town.moveDown()
+		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "down"]
+		(expect delegate.onOpenDoor.mostRecentCall.args).toEqual [[1, 0]]
+		(expect delegate.onHeroChanged.calls.length).toBe 2
 		(expect town.isExistObject 1, 0).toBe false
 		(expect town.heroLocation).toEqual [0, 0]
 		town.moveDown()
@@ -336,6 +369,7 @@ describe "RandomTownSpec", ->
 		(expect town.hero.exp).toBe 0
 		(expect town.hero.money).toBe 200
 		town.moveRight()
+		(expect delegate.onHeroChanged.calls.length).toBe 1
 		(expect town.hero.exp).toBe 10
 		(expect town.hero.money).toBe 210
 		(expect town.heroLocation).toEqual([0, 0])
@@ -458,4 +492,27 @@ describe "RandomTownSpec", ->
 		(expect floors.length).toBe 4
 		(expect floors[0].length).toBe 8
 		(expect floors[0][0].length).toBe 8
-			
+
+	it "测试代理", ->
+		delegate =
+			onHeroMove: (oldLocation, newLocation, direction) ->
+
+		town = new RandomTown
+			floors: [
+				[
+					[{ground: 0}, {ground: 0}]
+					[{ground: -1}, {ground: 0}]
+				]
+			]
+			hero: hero
+			heroFloorIndex: 0
+			heroLocation: [0, 0]
+			delegate: delegate
+
+		spyOn delegate, 'onHeroMove'
+		town.moveUp()
+		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "up"]
+
+		town.moveRight()
+		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 1], "right"]
+

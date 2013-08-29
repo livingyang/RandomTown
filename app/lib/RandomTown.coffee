@@ -7,7 +7,7 @@ grid = {ground: xxx, object: xxx}
 class RandomTown
 	constructor: (options) ->
 		options ?= {}
-		{@floors, @hero, @heroFloorIndex, @heroLocation} = options
+		{@floors, @hero, @heroFloorIndex, @heroLocation, @delegate} = options
 
 	getFloor: (floorIndex) ->
 		@floors[floorIndex]
@@ -28,6 +28,7 @@ class RandomTown
 
 	changeHeroProperty: (properties) ->
 		@hero[propertyName] += value for propertyName, value of properties when typeof @hero[propertyName] is "number" and typeof value is "number"
+		@delegate?.onHeroChanged?()
 
 	isValidRowAndCol: (row, col) ->
 		0 <= row < @floors[0].length and 0 <= col < @floors[0][0].length
@@ -48,7 +49,9 @@ class RandomTown
 		grid = @getFloorGrid (@getFloor floorIndex), row, col
 		grid?.object?.type? and RandomTown.ObjectHandle[grid.object.type].isVisible grid.object, grid.ground
 
-	moveHandle: (row, col) ->
+	moveHandle: (row, col, direction) ->
+		oldLocation = @heroLocation
+
 		if @isValidRowAndCol row, col
 			grid = @getFloorGrid @getCurFloor(), row, col			
 			if grid.ground is RandomTown.Road and grid.object?.type? and RandomTown.ObjectHandle[grid.object.type]?
@@ -56,17 +59,19 @@ class RandomTown
 			else
 				@heroLocation = [row, col] if grid.ground is RandomTown.Road
 
+		@delegate?.onHeroMove? oldLocation, @heroLocation, direction
+
 	moveUp: ->
-		@moveHandle @heroLocation[0] - 1, @heroLocation[1]
+		@moveHandle @heroLocation[0] - 1, @heroLocation[1], "up"
 
 	moveDown: ->
-		@moveHandle @heroLocation[0] + 1, @heroLocation[1]
+		@moveHandle @heroLocation[0] + 1, @heroLocation[1], "down"
 
 	moveLeft: ->
-		@moveHandle @heroLocation[0], @heroLocation[1] - 1
+		@moveHandle @heroLocation[0], @heroLocation[1] - 1, "left"
 
 	moveRight: ->
-		@moveHandle @heroLocation[0], @heroLocation[1] + 1
+		@moveHandle @heroLocation[0], @heroLocation[1] + 1, "right"
 
 RandomTown.Wall = -1
 RandomTown.Road = 0
@@ -264,7 +269,8 @@ RandomTown.ObjectHandle["plus"] =
 		else
 			object.isUsed = true
 			town.changeHeroProperty object
-			
+			town.delegate?.onUsePlus? objectLocation
+
 	getSimpleData: (object, ground) ->
 		if object.isUsed is true then ground else object.type
 
@@ -283,6 +289,8 @@ RandomTown.ObjectHandle["key"] =
 			town.hero.key ?= {}
 			town.hero.key[object.color] ?= 0
 			++town.hero.key[object.color]
+			town.delegate?.onPickupKey? objectLocation
+			town.delegate?.onHeroChanged?()
 
 	getSimpleData: (object, ground) ->
 		if object.isPickup is true then ground else object.type
@@ -301,6 +309,8 @@ RandomTown.ObjectHandle["door"] =
 			if town.hero.key?[object.color] > 0
 				object.isUnlock = true
 				--town.hero.key[object.color]
+				town.delegate?.onOpenDoor? objectLocation
+				town.delegate?.onHeroChanged?()
 
 	getSimpleData: (object, ground) ->
 		if object.isUnlock is true then ground else object.type
