@@ -4,6 +4,3 @@ Template.backHome.events "click .backHome" : ->
 
 Template.home.events "click .pageButton" : ->
 	gotoPage this.pageName
-
-Template.home.pageList = ->
-	({pageName: pageName} for pageName in getPageNameList())

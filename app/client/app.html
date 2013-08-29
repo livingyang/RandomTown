@@ -1,8 +1,15 @@
 <head>
   <title>RandomTown</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 
-<body>
-  {{> container}}
-</body>
+<template name="layout">
+<!-- 	<nav class="nav nav-pills navbar-fixed-bottom" role="navigation">
+		<li><a href="{{pathFor 'login'}}">Login</a></li>
+		<li><a href="{{pathFor 'home'}}">Home</a></li>
+	</nav> -->
+
+	<div class="container">
+		{{yield}}
+	</div>
+</template>

@@ -1,34 +1,28 @@
 <template name="town">
-	<h3>Town - 点击start，开始游戏</h3>
 
-	{{> backHome}}
+	{{#constant}}
+	<div id="fight"></div>
+	{{/constant}}
 
-	{{#unless hasHero}}
-		<button id="start" class="btn btn-success">Start</button>
-	{{/unless}}
+	{{#if hasHero}}
+		{{> hero}}
 
-<div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span2">
-	    {{#if hasHero}}
-			{{> hero}}
-<!-- 
-			{{#each mapControlButtons}}
-				{{> mapControlButton}}
-			{{/each}} -->
-		{{/if}}
+		{{#each mapControlButtons}}
+			{{> mapControlButton}}
+		{{/each}}
+
+		{{> backHome}}
 
 		{{#if lastEnemy}}
 			{{> enemy}}
 		{{/if}}
-    </div>
-    <div class="span10">
-		{{#constant}}
-		<div id="fight"></div>
-		{{/constant}}
-    </div>
-  </div>
-</div>
+
+	{{else}}
+		<h3>Town - 点击start，开始游戏</h3>
+		{{> backHome}}
+		<button id="start" class="btn btn-success">Start</button>
+	{{/if}}
+
 </template>
 
 <template name="mapControlButton">

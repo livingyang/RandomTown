@@ -1,5 +1,3 @@
-setPageNameToList "town"
-
 Template.town.rendered = ->
 
 Template.town.destroyed = ->
