@@ -358,11 +358,19 @@ describe "RandomTownSpec", ->
 			exp: 10
 			money: 10
 
+		delegate =
+			onHeroMove: (oldLocation, newLocation, direction) ->
+			onHeroChanged: ->
+
+		spyOn delegate, "onHeroMove"
+		spyOn delegate, "onHeroChanged"
+
 		town = new RandomTown
 			floors: floors
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
+			delegate: delegate
 
 		(expect town.getEnemyDamage 0, 1).toEqual 20
 

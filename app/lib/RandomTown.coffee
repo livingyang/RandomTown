@@ -338,6 +338,7 @@ RandomTown.ObjectHandle["enemy"] =
 			object.health = heroFight.defenser.health
 			town.hero.exp += object.exp if object.exp?
 			town.hero.money += object.money if object.money?
+			town.delegate?.onHeroChanged?()
 
 	getSimpleData: (object, ground) ->
 		if object.health <= 0 then ground else object.type

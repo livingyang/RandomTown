@@ -4,12 +4,19 @@ exec = require("child_process").exec
 dirDistSrc = "./dist/src"
 dirDistSpec = "./dist/spec"
 
+onBuildAllFileDone = -> console.log "onBuildAllFileDone"
+buildingFileCount = 0
 buildFile = (filePath, distDir) ->
+	++buildingFileCount
 	exec "coffee -o #{distDir} -c #{filePath}", (error, stdout, stderr) ->
 	    if error?
 	    	console.log('stdout: ' + stdout)
     		console.log('stderr: ' + stderr)
     		console.log('exec error: ' + error)
+    	--buildingFileCount
+    	if buildingFileCount is 0
+    		onBuildAllFileDone?()
+    	
 
 # build src file
 srcFiles = [
@@ -44,10 +51,12 @@ runHtml = runHtml.replace "<!-- src -->", getDirScriptTags(dirDistSrc)
 runHtml = runHtml.replace "<!-- spec -->", getDirScriptTags(dirDistSpec)
 
 runHtmlFilename = "SpecRunner.html"
-fs.writeFileSync runHtmlFilename, runHtml
 
-exec "open #{runHtmlFilename}", (error, stdout, stderr) ->
-	    if error?
-	    	console.log('stdout: ' + stdout)
-    		console.log('stderr: ' + stderr)
-    		console.log('exec error: ' + error)
+onBuildAllFileDone = ->
+	fs.writeFile runHtmlFilename, runHtml, (error) ->
+		exec "open #{runHtmlFilename}", (error, stdout, stderr) ->
+			if error?
+				console.log('stdout: ' + stdout)
+				console.log('stderr: ' + stderr)
+				console.log('exec error: ' + error)
+			console.log "open done!!"
