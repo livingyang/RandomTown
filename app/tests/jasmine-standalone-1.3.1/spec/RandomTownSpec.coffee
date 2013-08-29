@@ -99,6 +99,13 @@ describe "RandomTownSpec", ->
 			heroFloorIndex: 0
 			heroLocation: [1, 0]
 
+		town.delegate = delegate =
+			onHeroMove: (oldLocation, newLocation, direction) ->
+			onFloorChanged: (oldFloorIndex, newFloorIndex) ->
+
+		spyOn delegate, "onHeroMove"
+		spyOn delegate, "onFloorChanged"
+
 		(expect town.heroFloorIndex).toBe(0)
 		(expect town.heroLocation).toEqual([1, 0])
 
@@ -113,6 +120,9 @@ describe "RandomTownSpec", ->
 		(expect town.heroLocation).toEqual([1, 1])
 
 		town.moveRight()
+
+		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[1, 1], [1, 2], "right"]
+		(expect delegate.onFloorChanged.mostRecentCall.args).toEqual [0, 1]
 		(expect town.heroFloorIndex).toBe(1)
 		(expect town.heroLocation).toEqual([1, 2])
 
@@ -361,9 +371,11 @@ describe "RandomTownSpec", ->
 		delegate =
 			onHeroMove: (oldLocation, newLocation, direction) ->
 			onHeroChanged: ->
+			onFightEnemy: (heroFight) ->
 
 		spyOn delegate, "onHeroMove"
 		spyOn delegate, "onHeroChanged"
+		spyOn delegate, "onFightEnemy"
 
 		town = new RandomTown
 			floors: floors
@@ -378,6 +390,8 @@ describe "RandomTownSpec", ->
 		(expect town.hero.money).toBe 200
 		town.moveRight()
 		(expect delegate.onHeroChanged.calls.length).toBe 1
+		(expect delegate.onFightEnemy.calls.length).toBe 1
+		(expect delegate.onFightEnemy.mostRecentCall.args[0]).toEqual jasmine.any(HeroFight)
 		(expect town.hero.exp).toBe 10
 		(expect town.hero.money).toBe 210
 		(expect town.heroLocation).toEqual([0, 0])

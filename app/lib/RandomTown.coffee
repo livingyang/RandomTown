@@ -249,7 +249,9 @@ RandomTown.ObjectHandle["hole"] =
 		else if object.floorIndex is town.floors.length
 			console.log "Town End Point enter"
 		else
+			oldFloorIndex = town.heroFloorIndex
 			town.heroFloorIndex = object.floorIndex
+			town.delegate?.onFloorChanged? oldFloorIndex, town.heroFloorIndex
 		
 		town.heroLocation = object.location
 
@@ -339,6 +341,7 @@ RandomTown.ObjectHandle["enemy"] =
 			town.hero.exp += object.exp if object.exp?
 			town.hero.money += object.money if object.money?
 			town.delegate?.onHeroChanged?()
+			town.delegate?.onFightEnemy heroFight
 
 	getSimpleData: (object, ground) ->
 		if object.health <= 0 then ground else object.type

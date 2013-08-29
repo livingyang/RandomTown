@@ -59,4 +59,3 @@ onBuildAllFileDone = ->
 				console.log('stdout: ' + stdout)
 				console.log('stderr: ' + stderr)
 				console.log('exec error: ' + error)
-			console.log "open done!!"
