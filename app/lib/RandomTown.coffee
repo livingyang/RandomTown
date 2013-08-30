@@ -34,6 +34,7 @@ class RandomTown
 		0 <= row < @floors[0].length and 0 <= col < @floors[0][0].length
 
 	getEnemyDamage: (row, col) ->
+		damage = 0
 		if @isValidRowAndCol row, col
 			grid = @getFloorGrid @getCurFloor(), row, col
 			if grid.object?.type is "enemy"
@@ -41,8 +42,8 @@ class RandomTown
 					attacker: @hero
 					defenser: grid.object
 
-				return @hero.health - heroFight.attacker.health
-		0
+				damage = @hero.health - heroFight.attacker.health
+		damage
 
 	isExistObject: (row, col, floorIndex) ->
 		floorIndex ?= @heroFloorIndex
@@ -226,6 +227,9 @@ class HeroFight
 		@attacker = JSON.parse(JSON.stringify(options.attacker ? {}))
 		@defenser = JSON.parse(JSON.stringify(options.defenser ? {}))
 		@maxTurnCount = options.maxTurnCount ? 100
+		@healthList = []
+		@attacker.initHealth = @attacker.health
+		@defenser.initHealth = @defenser.health
 
 		for turnIndex in [0...@maxTurnCount]
 			[attacker, defenser] = if turnIndex % 2 is 0
@@ -234,6 +238,7 @@ class HeroFight
 
 			damage = attacker.attack - defenser.defense
 			defenser.health -= damage if damage > 0
+			@healthList.push defenser.health
 			break if defenser.health <= 0
 
 @HeroFight = HeroFight
