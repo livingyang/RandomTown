@@ -7,6 +7,14 @@ FightLayer = collie.Class
 		options.width = 100
 		options.height = 100
 		@set options
+		
+		new collie.DisplayObject
+			x: 0
+			y: 0
+			width: options.width
+			height: options.height
+			backgroundColor : "gray"
+		.addTo this
 
 		@arrowObject = new ArrowObject
 			arrowImage: "arrow"

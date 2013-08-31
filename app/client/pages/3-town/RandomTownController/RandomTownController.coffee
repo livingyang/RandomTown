@@ -94,7 +94,10 @@ class RandomTownController
 
 		map.attach
 			mapclick: ->
-				(new FightLayer).addTo()
+				new FightLayer
+					width: 320
+					height: 320
+				.addTo()
 
 	startGame: (options) ->
 
