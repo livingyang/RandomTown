@@ -92,6 +92,10 @@ class RandomTownController
 			# spriteSheet: "hero"
 			backgroundImage: "hero"
 
+		map.attach
+			mapclick: ->
+				(new FightLayer).addTo()
+
 	startGame: (options) ->
 
 		if not options.divElement?
