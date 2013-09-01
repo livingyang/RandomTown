@@ -31,7 +31,7 @@ class RandomTown
 		@delegate?.onHeroChanged?()
 
 	isValidRowAndCol: (row, col) ->
-		0 <= row < @floors[0].length and 0 <= col < @floors[0][0].length
+		0 <= row < @getFloorRows() and 0 <= col < @getFloorCols()
 
 	getEnemyDamage: (row, col) ->
 		damage = 0
@@ -73,6 +73,12 @@ class RandomTown
 
 	moveRight: ->
 		@moveHandle @heroLocation[0], @heroLocation[1] + 1, "right"
+
+	getFloorRows: ->
+		@getFloor(0)?.length or 0
+
+	getFloorCols: ->
+		@getFloor(0)?[0]?.length or 0
 
 RandomTown.Wall = -1
 RandomTown.Road = 0

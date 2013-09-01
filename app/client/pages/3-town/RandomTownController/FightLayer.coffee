@@ -4,8 +4,8 @@ collie.ImageManager.add
 FightLayer = collie.Class
 	$init: (options) ->
 		options ?= {}
-		options.width = 100
-		options.height = 100
+		options.width ?= 100
+		options.height ?= 100
 		@set options
 		
 		new collie.DisplayObject
@@ -14,11 +14,15 @@ FightLayer = collie.Class
 			width: options.width
 			height: options.height
 			backgroundColor : "gray"
+			opacity: 0.7
 		.addTo this
 
 		@arrowObject = new ArrowObject
 			arrowImage: "arrow"
 		.addTo this
+
+		@arrowObject.set "x", 100
+		@arrowObject.set "y", 100
 
 		runTimeWork = (options) ->
 			collie.Timer.cycle (oEvent) ->

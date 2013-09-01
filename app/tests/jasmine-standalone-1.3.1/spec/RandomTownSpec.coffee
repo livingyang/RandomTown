@@ -13,6 +13,21 @@ describe "RandomTownSpec", ->
 		town = new RandomTown()
 		(expect town).toEqual(jasmine.any(RandomTown))
 	
+	it "测试克隆", ->
+		floors = []
+		floors.push [
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Road, object: {type: "entry"}}, {ground: RandomTown.Road, object: {type: "exit"}}, {ground: RandomTown.Wall}]
+			[{ground: RandomTown.Wall}, {ground: RandomTown.Wall}, {ground: RandomTown.Wall}]
+		]
+		town = new RandomTown
+			floors: floors
+			hero: hero
+			heroFloorIndex: 0
+			heroLocation: [1, 0]
+
+		(expect town).toEqual new RandomTown JSON.parse JSON.stringify town
+
 	it "测试常量", ->
 
 		(expect RandomTown.Wall).toBe(-1)
