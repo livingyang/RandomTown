@@ -389,7 +389,7 @@ describe "RandomTownSpec", ->
 		delegate =
 			onHeroMove: (oldLocation, newLocation, direction) ->
 			onHeroChanged: ->
-			onFightEnemy: (heroFight) ->
+			onFightEnemy: (enemyLocation, heroFight) ->
 
 		spyOn delegate, "onHeroMove"
 		spyOn delegate, "onHeroChanged"
@@ -409,7 +409,8 @@ describe "RandomTownSpec", ->
 		town.moveRight()
 		(expect delegate.onHeroChanged.calls.length).toBe 1
 		(expect delegate.onFightEnemy.calls.length).toBe 1
-		(expect delegate.onFightEnemy.mostRecentCall.args[0]).toEqual jasmine.any(HeroFight)
+		(expect delegate.onFightEnemy.mostRecentCall.args[0]).toEqual [0, 1]
+		(expect delegate.onFightEnemy.mostRecentCall.args[1]).toEqual jasmine.any(HeroFight)
 		(expect town.hero.exp).toBe 10
 		(expect town.hero.money).toBe 210
 		(expect town.heroLocation).toEqual([0, 0])
