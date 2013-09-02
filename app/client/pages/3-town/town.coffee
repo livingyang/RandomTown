@@ -177,15 +177,7 @@ class @TownController extends RouteController
 		@randomTown.delegate = this
 
 		# resetTown @randomTown
-		layerWidth = 32 * @randomTown.getFloorCols()
-		layerHeight = 32 * @randomTown.getFloorRows()
-
-		layer = new collie.Layer
-			width : layerWidth
-			height : layerHeight
-
-		collie.Renderer.removeAllLayer()
-		collie.Renderer.addLayer layer
+		
 
 		# drawMap town.getCurFloor(), town.heroLocation, layer, town
 
@@ -218,46 +210,47 @@ class @TownController extends RouteController
 		collie.ImageManager.addSprite "door",
 			door: [0, 0]
 
-		layer.removeChildren layer.getChildren()
+		# layer.removeChildren layer.getChildren()
 
-		gridWidth = 32
-		gridHeight = 32
+		# gridWidth = 32
+		# gridHeight = 32
 
-		# mapData = ({backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"} for col in [0...floor[0].length] for row in [0...floor.length])
-		mapData = for row in [0...@randomTown.getCurFloor().length]
-			for col in [0...@randomTown.getCurFloor()[0].length]
-				# backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"
-				# spriteX: if floor[row][col].ground is RandomTown.Road then 2 else 1
-				backgroundImage: if @randomTown.getCurFloor()[row][col].ground is RandomTown.Road then "road" else "wall"
+		# # mapData = ({backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"} for col in [0...floor[0].length] for row in [0...floor.length])
+		# mapData = for row in [0...@randomTown.getCurFloor().length]
+		# 	for col in [0...@randomTown.getCurFloor()[0].length]
+		# 		# backgroundColor: if floor[row][col].ground is RandomTown.Road then "green" else "red"
+		# 		# spriteX: if floor[row][col].ground is RandomTown.Road then 2 else 1
+		# 		backgroundImage: if @randomTown.getCurFloor()[row][col].ground is RandomTown.Road then "road" else "wall"
 
-		@map = (new collie.Map gridWidth, gridHeight,
-			useEvent : true
-		).addTo(layer).addObjectTo layer
+		# @map = (new collie.Map gridWidth, gridHeight,
+		# 	useEvent : true
+		# ).addTo(layer).addObjectTo layer
 
-		@map.setMapData mapData
+		# @map.setMapData mapData
 
-		for tileY, cols of @randomTown.getCurFloor()
-			for tileX, grid of cols				
-				if grid?.object?.type? and @randomTown.isExistObject Number(tileY), Number(tileX)	
-					@map.addObject tileX, tileY, new collie.DisplayObject
-						width: gridWidth
-						height: gridHeight
-						x: @map.getTileIndexToPos(tileX, tileY).x
-						y: @map.getTileIndexToPos(tileX, tileY).y
-						backgroundImage: grid.object.type
+		# for tileY, cols of @randomTown.getCurFloor()
+		# 	for tileX, grid of cols				
+		# 		if grid?.object?.type? and @randomTown.isExistObject Number(tileY), Number(tileX)	
+		# 			@map.addObject tileX, tileY, new collie.DisplayObject
+		# 				width: gridWidth
+		# 				height: gridHeight
+		# 				x: @map.getTileIndexToPos(tileX, tileY).x
+		# 				y: @map.getTileIndexToPos(tileX, tileY).y
+		# 				backgroundImage: grid.object.type
 						
-		heroTileX = @randomTown.heroLocation[1]
-		heroTileY = @randomTown.heroLocation[0]
-		@heroObject = new collie.DisplayObject
-			width: gridWidth
-			height: gridHeight
-			x: @map.getTileIndexToPos(heroTileX, heroTileY).x
-			y: @map.getTileIndexToPos(heroTileX, heroTileY).y
-			# backgroundImage: "sample"
-			# spriteSheet: "hero"
-			backgroundImage: "hero"
-		@map.addObject heroTileX, heroTileY, @heroObject
-
+		# heroTileX = @randomTown.heroLocation[1]
+		# heroTileY = @randomTown.heroLocation[0]
+		# @heroObject = new collie.DisplayObject
+		# 	width: gridWidth
+		# 	height: gridHeight
+		# 	x: @map.getTileIndexToPos(heroTileX, heroTileY).x
+		# 	y: @map.getTileIndexToPos(heroTileX, heroTileY).y
+		# 	# backgroundImage: "sample"
+		# 	# spriteSheet: "hero"
+		# 	backgroundImage: "hero"
+		# @map.addObject heroTileX, heroTileY, @heroObject
+		@resetMap()
+		
 		# 绑定事件
 		Mousetrap.bind "up", =>
 			@randomTown.moveUp()
@@ -281,11 +274,11 @@ class @TownController extends RouteController
 	onHeroMove: (oldLocation, newLocation, direction) ->
 		# console.log arguments
 		# console.log @map.getObjects oldLocation[1], oldLocation[0]
-		@map.moveObject newLocation[1], newLocation[0], @heroObject
-		@heroObject.set
-			x: @map.getTileIndexToPos(newLocation[1], newLocation[0]).x
-			y: @map.getTileIndexToPos(newLocation[1], newLocation[0]).y
-
+		# @map.moveObject newLocation[1], newLocation[0], @heroObject
+		# @heroObject.set
+		# 	x: @map.getTileIndexToPos(newLocation[1], newLocation[0]).x
+		# 	y: @map.getTileIndexToPos(newLocation[1], newLocation[0]).y
+		@moveHeroObject @heroObject, newLocation, @map
 	onHeroChanged: ->
 	onUsePlus: (plusLocation) ->
 		@map.removeObject (@map.getObjects plusLocation[1], plusLocation[0])[0]
@@ -295,3 +288,42 @@ class @TownController extends RouteController
 		@map.removeObject (@map.getObjects doorLocation[1], doorLocation[0])[0]
 	onFightEnemy: (enemyLocation, heroFight) ->
 		@map.removeObject (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
+	
+	createHeroObject: (hero) ->
+		new collie.DisplayObject
+			width: 32
+			height: 32
+			backgroundImage: "hero"
+	
+	resetMap: ->
+		# clear
+		collie.Renderer.removeAllLayer()
+
+		# create
+		layerWidth = 32 * @randomTown.getFloorCols()
+		layerHeight = 32 * @randomTown.getFloorRows()
+
+		layer = new collie.Layer
+			width : layerWidth
+			height : layerHeight
+
+		collie.Renderer.addLayer layer
+
+		mapData = for row in [0...@randomTown.getCurFloor().length]
+			for col in [0...@randomTown.getCurFloor()[0].length]
+				backgroundImage: if @randomTown.getCurFloor()[row][col].ground is RandomTown.Road then "road" else "wall"
+
+		@map = (new collie.Map 32, 32,
+			useEvent : true
+		).addTo(layer).addObjectTo layer
+
+		@map.setMapData mapData
+		@heroObject = @createHeroObject @randomTown.hero
+		@map.addObject 0, 0, @heroObject
+		@moveHeroObject @heroObject, @randomTown.heroLocation, @map
+
+	moveHeroObject: (heroObject, heroLocation, map) ->
+		map.moveObject heroLocation[1], heroLocation[0], heroObject
+		heroObject.set
+			x: map.getTileIndexToPos(heroLocation[1], heroLocation[0]).x
+			y: map.getTileIndexToPos(heroLocation[1], heroLocation[0]).y
