@@ -48,6 +48,8 @@ FightLayer = collie.Class
 					@arrowObject.arrowRight()
 			complete: => collie.Renderer.removeLayer this
 
+	createFightObjectDetails: (fightObject, x, y) ->
+		
 
 , collie.Layer
 

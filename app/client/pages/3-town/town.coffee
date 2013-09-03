@@ -175,6 +175,12 @@ class @TownController extends RouteController
 		@map.addObject 0, 0, @heroObject
 		@moveHeroObject @heroObject, @randomTown.heroLocation, @map
 
+		@map.attach
+			mapclick: ->
+				new FightLayer
+					width: 320
+					height: 320
+				.addTo()
 	moveHeroObject: (heroObject, heroLocation, map) ->
 		map.moveObject heroLocation[1], heroLocation[0], heroObject
 		heroObject.set
