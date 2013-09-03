@@ -13,41 +13,14 @@ Template.town.destroyed = ->
 Template.town.events "click .mapControlButton" : ->
 	RandomTownController.getInstance().keyboardHandle[@key]?()
 
-Template.town.events "click #start" : ->
-	return
-	RandomTownController.getInstance().startGame
-		divElement: document.getElementById "fight"
-		floorCount: 4
-		rows: 11
-		cols: 11
-		initLocation: [0, 0]
-		heroFloorIndex: 0
-		hero:
-			name: "SuperManXX"
-			attack: 100
-			defense: 80
-			health: 1000
-			exp: 0
-			money: 200
-			key:
-				yellow: 1
-
-	Session.set "hero", RandomTownController.getInstance().town.hero if RandomTownController.getInstance()?.town?.hero?
-
 Template.town.mapControlButtons = ->
 	(key: key for key, func of RandomTownController.getInstance().keyboardHandle)
-
-Template.town.hasHero = ->
-	(Session.get "hero")?
 
 Template.hero.hero = ->
 	Session.get "hero"
 
-Template.town.lastEnemy = ->
-	(Session.get "lastEnemy")?
-
-Template.enemy.enemy = ->
-	Session.get "lastEnemy"
+Template.town.floorInfo = ->
+	Session.get "floorInfo"
 
 stopCollie = ->
 	if collie.Renderer.isPlaying()
@@ -93,6 +66,7 @@ class @TownController extends RouteController
 		@randomTown.delegate = this
 
 		Session.set "hero", @randomTown.hero
+		Session.set "floorInfo", "#{@randomTown.heroFloorIndex + 1}/#{@randomTown.floors.length}"
 
 		collie.ImageManager.add "hero", "011-Braver01.png"
 		collie.ImageManager.add "map", "203-other03.png"
@@ -151,6 +125,8 @@ class @TownController extends RouteController
 	# RandomTownDelegate
 	onFloorChanged: (oldFloorIndex, newFloorIndex) ->
 		@resetMap()
+		# Session.set "randomTown", @randomTown
+
 	onHeroMove: (oldLocation, newLocation, direction) ->
 		@moveHeroObject @heroObject, newLocation, @map
 	onHeroChanged: ->
@@ -161,7 +137,7 @@ class @TownController extends RouteController
 		@map.removeObject (@map.getObjects keyLocation[1], keyLocation[0])[0]
 	onOpenDoor: (doorLocation) ->
 		@map.removeObject (@map.getObjects doorLocation[1], doorLocation[0])[0]
-	onFightEnemy: (enemyLocation, heroFight) ->
+	onFightEnemy: (enemyLocation, heroFight, enemy) ->
 		@map.removeObject (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
 	
 	createHeroObject: (hero) ->

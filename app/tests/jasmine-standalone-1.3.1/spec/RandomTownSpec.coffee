@@ -411,6 +411,7 @@ describe "RandomTownSpec", ->
 		(expect delegate.onFightEnemy.calls.length).toBe 1
 		(expect delegate.onFightEnemy.mostRecentCall.args[0]).toEqual [0, 1]
 		(expect delegate.onFightEnemy.mostRecentCall.args[1]).toEqual jasmine.any(HeroFight)
+		(expect delegate.onFightEnemy.mostRecentCall.args[2].type).toEqual "enemy"
 		(expect town.hero.exp).toBe 10
 		(expect town.hero.money).toBe 210
 		(expect town.heroLocation).toEqual([0, 0])

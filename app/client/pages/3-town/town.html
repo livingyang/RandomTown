@@ -4,24 +4,16 @@
 	<div id="fight"></div>
 	{{/constant}}
 
-	{{#if hasHero}}
-		{{> hero}}
+	{{> hero}}
 
-		{{#each mapControlButtons}}
-			{{> mapControlButton}}
-		{{/each}}
+	<p>楼层: {{floorInfo}}</p>
 
-		{{> backHome}}
-
-		{{#if lastEnemy}}
-			{{> enemy}}
-		{{/if}}
-
-	{{else}}
-		<h3>Town - 点击start，开始游戏 {{title}}, {{data}}</h3>
-		{{> backHome}}
-		<button id="start" class="btn btn-success">Start</button>
-	{{/if}}
+	<!-- {{#each mapControlButtons}}
+		{{> mapControlButton}}
+	{{/each}}
+ -->
+	<!-- <h3>Town - 点击start，开始游戏</h3> -->
+	{{> backHome}}
 
 </template>
 
@@ -36,12 +28,4 @@
 	<p>经验: {{hero.exp}}</p>
 	<p>金币: {{hero.money}}</p>
 	<p>黄钥匙: {{hero.key.yellow}}</p>
-</template>
-
-<template name="enemy">
-	<p>敌方生命: {{enemy.health}}</p>
-	<p>敌方攻击: {{enemy.attack}}</p>
-	<p>敌方防御: {{enemy.defense}}</p>
-	<p>敌方经验: {{enemy.exp}}</p>
-	<p>敌方金币: {{enemy.money}}</p>
 </template>
