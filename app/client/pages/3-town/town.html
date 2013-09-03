@@ -4,16 +4,13 @@
 	<div id="fight"></div>
 	{{/constant}}
 
+	{{#each mapControlButtons}}
+		{{> mapControlButton}}
+	{{/each}}
+	
 	{{> hero}}
 
 	<p>楼层: {{floorInfo}}</p>
-
-	<!-- {{#each mapControlButtons}}
-		{{> mapControlButton}}
-	{{/each}}
- -->
- 	<button id="btnTest">Test</button>
-	{{> backHome}}
 
 </template>
 

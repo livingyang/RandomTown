@@ -6,25 +6,18 @@ Template.town.rendered = ->
 Template.town.destroyed = ->
 	Mousetrap.reset()
 	stopCollie()
-	return
-	RandomTownController.getInstance().stopGame()
-
 
 Template.town.events "click .mapControlButton" : ->
-	RandomTownController.getInstance().keyboardHandle[@key]?()
+	Mousetrap.trigger @key
 
 Template.town.mapControlButtons = ->
-	(key: key for key, func of RandomTownController.getInstance().keyboardHandle)
+	(key: key for key in ["up", "down", "left", "right"])
 
 Template.hero.hero = ->
 	Session.get "hero"
 
 Template.town.floorInfo = ->
 	Session.get "floorInfo"
-
-Template.town.events "click #btnTest": ->
-	Session.setDefault "randomTown", {}
-
 
 stopCollie = ->
 	if collie.Renderer.isPlaying()
@@ -53,7 +46,6 @@ class @TownController extends RouteController
 
 	run: ->
 		# 1 创建RandomTown
-		# @randomTown = Session.get "randomTown"
 		@randomTown = loadRandomTown()
 		if @randomTown?
 			@randomTown = new RandomTown @randomTown
@@ -73,13 +65,11 @@ class @TownController extends RouteController
 					money: 200
 					key:
 						yellow: 1
-			# Session.set "randomTown", @randomTown
 			saveRandomTown @randomTown
 
 		# set delegate func
 		@randomTown.onFloorChanged = (oldFloorIndex, newFloorIndex) =>
 			@resetMap()
-			# Session.set "randomTown", @randomTown
 			saveRandomTown @randomTown
 			Session.set "floorInfo", "#{@randomTown.heroFloorIndex + 1}/#{@randomTown.floors.length}"
 
