@@ -22,6 +22,10 @@ Template.hero.hero = ->
 Template.town.floorInfo = ->
 	Session.get "floorInfo"
 
+Template.town.events "click #btnTest": ->
+	Session.setDefault "randomTown", {}
+
+
 stopCollie = ->
 	if collie.Renderer.isPlaying()
 		collie.Renderer.stop()
@@ -37,12 +41,20 @@ createRandomTown = (options) ->
 		heroFloorIndex: options.heroFloorIndex
 		heroLocation: options.initLocation
 
+randomTownCache = null
+saveRandomTown = (randomTown) ->
+	randomTownCache = JSON.parse JSON.stringify randomTown
+
+loadRandomTown = ->
+	randomTownCache
+
 class @TownController extends RouteController
 	template: "town"
 
 	run: ->
 		# 1 创建RandomTown
-		@randomTown = Session.get "randomTown"
+		# @randomTown = Session.get "randomTown"
+		@randomTown = loadRandomTown()
 		if @randomTown?
 			@randomTown = new RandomTown @randomTown
 		else
@@ -61,9 +73,28 @@ class @TownController extends RouteController
 					money: 200
 					key:
 						yellow: 1
-			Session.set "randomTown", @randomTown
+			# Session.set "randomTown", @randomTown
+			saveRandomTown @randomTown
 
-		@randomTown.delegate = this
+		# set delegate func
+		@randomTown.onFloorChanged = (oldFloorIndex, newFloorIndex) =>
+			@resetMap()
+			# Session.set "randomTown", @randomTown
+			saveRandomTown @randomTown
+			Session.set "floorInfo", "#{@randomTown.heroFloorIndex + 1}/#{@randomTown.floors.length}"
+
+		@randomTown.onHeroMove = (oldLocation, newLocation, direction) =>
+			@moveHeroObject @heroObject, newLocation, @map
+		@randomTown.onHeroChanged = =>
+			Session.set "hero", @randomTown.hero
+		@randomTown.onUsePlus = (plusLocation) =>
+			@map.removeObject (@map.getObjects plusLocation[1], plusLocation[0])[0]
+		@randomTown.onPickupKey = (keyLocation) =>
+			@map.removeObject (@map.getObjects keyLocation[1], keyLocation[0])[0]
+		@randomTown.onOpenDoor = (doorLocation) =>
+			@map.removeObject (@map.getObjects doorLocation[1], doorLocation[0])[0]
+		@randomTown.onFightEnemy = (enemyLocation, heroFight, enemy) =>
+			@map.removeObject (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
 
 		Session.set "hero", @randomTown.hero
 		Session.set "floorInfo", "#{@randomTown.heroFloorIndex + 1}/#{@randomTown.floors.length}"
@@ -122,24 +153,6 @@ class @TownController extends RouteController
 	data: ->
 		hero: Session.get "hero"
 
-	# RandomTownDelegate
-	onFloorChanged: (oldFloorIndex, newFloorIndex) ->
-		@resetMap()
-		# Session.set "randomTown", @randomTown
-
-	onHeroMove: (oldLocation, newLocation, direction) ->
-		@moveHeroObject @heroObject, newLocation, @map
-	onHeroChanged: ->
-		Session.set "hero", @randomTown.hero
-	onUsePlus: (plusLocation) ->
-		@map.removeObject (@map.getObjects plusLocation[1], plusLocation[0])[0]
-	onPickupKey: (keyLocation) ->
-		@map.removeObject (@map.getObjects keyLocation[1], keyLocation[0])[0]
-	onOpenDoor: (doorLocation) ->
-		@map.removeObject (@map.getObjects doorLocation[1], doorLocation[0])[0]
-	onFightEnemy: (enemyLocation, heroFight, enemy) ->
-		@map.removeObject (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
-	
 	createHeroObject: (hero) ->
 		new collie.DisplayObject
 			width: 32

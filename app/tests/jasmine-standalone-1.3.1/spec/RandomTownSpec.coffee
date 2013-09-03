@@ -114,12 +114,8 @@ describe "RandomTownSpec", ->
 			heroFloorIndex: 0
 			heroLocation: [1, 0]
 
-		town.delegate = delegate =
-			onHeroMove: (oldLocation, newLocation, direction) ->
-			onFloorChanged: (oldFloorIndex, newFloorIndex) ->
-
-		spyOn delegate, "onHeroMove"
-		spyOn delegate, "onFloorChanged"
+		spyOn town, "onHeroMove"
+		spyOn town, "onFloorChanged"
 
 		(expect town.heroFloorIndex).toBe(0)
 		(expect town.heroLocation).toEqual([1, 0])
@@ -136,8 +132,8 @@ describe "RandomTownSpec", ->
 
 		town.moveRight()
 
-		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[1, 1], [1, 2], "right"]
-		(expect delegate.onFloorChanged.mostRecentCall.args).toEqual [0, 1]
+		(expect town.onHeroMove.mostRecentCall.args).toEqual [[1, 1], [1, 2], "right"]
+		(expect town.onFloorChanged.mostRecentCall.args).toEqual [0, 1]
 		(expect town.heroFloorIndex).toBe(1)
 		(expect town.heroLocation).toEqual([1, 2])
 
@@ -176,22 +172,16 @@ describe "RandomTownSpec", ->
 			exp: 10
 			errorProperty: 10
 
-		delegate =
-			onHeroMove: (oldLocation, newLocation, direction) ->
-			onUsePlus: (plusLocation) ->
-			onHeroChanged: ->
-
-		spyOn delegate, "onHeroMove"
-		spyOn delegate, "onUsePlus"
-		spyOn delegate, "onHeroChanged"
-
 		town = new RandomTown
 			floors: floors
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 1]
-			delegate: delegate
 		
+		spyOn town, "onHeroMove"
+		spyOn town, "onUsePlus"
+		spyOn town, "onHeroChanged"
+
 		(expect town.isExistObject 0, 0).toBe(false)
 		
 		(expect town.hero.attack).toBe(100)
@@ -201,9 +191,9 @@ describe "RandomTownSpec", ->
 		
 		town.moveDown()
 
-		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 1], [0, 1], "down"]
-		(expect delegate.onUsePlus.mostRecentCall.args).toEqual [[1, 1]]
-		(expect delegate.onHeroChanged.calls.length).toBe 1
+		(expect town.onHeroMove.mostRecentCall.args).toEqual [[0, 1], [0, 1], "down"]
+		(expect town.onUsePlus.mostRecentCall.args).toEqual [[1, 1]]
+		(expect town.onHeroChanged.calls.length).toBe 1
 		(expect floors[0][1][1].object.isUsed).toBe(true)
 		(expect town.isExistObject 1, 1).toBe(false)
 		(expect town.heroLocation).toEqual([0, 1])
@@ -231,23 +221,16 @@ describe "RandomTownSpec", ->
 			type: "door"
 			color: "yellow"
 
-		delegate =
-			onHeroMove: (oldLocation, newLocation, direction) ->
-			onPickupKey: (keyLocation) ->
-			onOpenDoor: (doorLocation) ->
-			onHeroChanged: ->
-
-		spyOn delegate, "onHeroMove"
-		spyOn delegate, "onPickupKey"
-		spyOn delegate, "onOpenDoor"
-		spyOn delegate, "onHeroChanged"
-
 		town = new RandomTown
 			floors: floors
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
-			delegate: delegate
+
+		spyOn town, "onHeroMove"
+		spyOn town, "onPickupKey"
+		spyOn town, "onOpenDoor"
+		spyOn town, "onHeroChanged"
 
 		(expect town.heroLocation).toEqual [0, 0]
 		town.moveDown()
@@ -258,9 +241,9 @@ describe "RandomTownSpec", ->
 		(expect town.floors[0][0][1].object.isPickup).not.toBe true
 		
 		town.moveRight()
-		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "right"]
-		(expect delegate.onPickupKey.mostRecentCall.args).toEqual [[0, 1]]
-		(expect delegate.onHeroChanged.calls.length).toBe 1
+		(expect town.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "right"]
+		(expect town.onPickupKey.mostRecentCall.args).toEqual [[0, 1]]
+		(expect town.onHeroChanged.calls.length).toBe 1
 		(expect town.isExistObject 0, 1).toBe false
 		(expect town.floors[0][0][1].object.isPickup).toBe true
 		(expect town.heroLocation).toEqual [0, 0]
@@ -274,9 +257,9 @@ describe "RandomTownSpec", ->
 		(expect town.heroLocation).toEqual [0, 0]
 		
 		town.moveDown()
-		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "down"]
-		(expect delegate.onOpenDoor.mostRecentCall.args).toEqual [[1, 0]]
-		(expect delegate.onHeroChanged.calls.length).toBe 2
+		(expect town.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "down"]
+		(expect town.onOpenDoor.mostRecentCall.args).toEqual [[1, 0]]
+		(expect town.onHeroChanged.calls.length).toBe 2
 		(expect town.isExistObject 1, 0).toBe false
 		(expect town.heroLocation).toEqual [0, 0]
 		town.moveDown()
@@ -386,32 +369,26 @@ describe "RandomTownSpec", ->
 			exp: 10
 			money: 10
 
-		delegate =
-			onHeroMove: (oldLocation, newLocation, direction) ->
-			onHeroChanged: ->
-			onFightEnemy: (enemyLocation, heroFight) ->
-
-		spyOn delegate, "onHeroMove"
-		spyOn delegate, "onHeroChanged"
-		spyOn delegate, "onFightEnemy"
-
 		town = new RandomTown
 			floors: floors
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
-			delegate: delegate
+
+		spyOn town, "onHeroMove"
+		spyOn town, "onHeroChanged"
+		spyOn town, "onFightEnemy"
 
 		(expect town.getEnemyDamage 0, 1).toEqual 20
 
 		(expect town.hero.exp).toBe 0
 		(expect town.hero.money).toBe 200
 		town.moveRight()
-		(expect delegate.onHeroChanged.calls.length).toBe 1
-		(expect delegate.onFightEnemy.calls.length).toBe 1
-		(expect delegate.onFightEnemy.mostRecentCall.args[0]).toEqual [0, 1]
-		(expect delegate.onFightEnemy.mostRecentCall.args[1]).toEqual jasmine.any(HeroFight)
-		(expect delegate.onFightEnemy.mostRecentCall.args[2].type).toEqual "enemy"
+		(expect town.onHeroChanged.calls.length).toBe 1
+		(expect town.onFightEnemy.calls.length).toBe 1
+		(expect town.onFightEnemy.mostRecentCall.args[0]).toEqual [0, 1]
+		(expect town.onFightEnemy.mostRecentCall.args[1]).toEqual jasmine.any(HeroFight)
+		(expect town.onFightEnemy.mostRecentCall.args[2].type).toEqual "enemy"
 		(expect town.hero.exp).toBe 10
 		(expect town.hero.money).toBe 210
 		(expect town.heroLocation).toEqual([0, 0])
@@ -536,9 +513,6 @@ describe "RandomTownSpec", ->
 		(expect floors[0][0].length).toBe 8
 
 	it "测试代理", ->
-		delegate =
-			onHeroMove: (oldLocation, newLocation, direction) ->
-
 		town = new RandomTown
 			floors: [
 				[
@@ -549,12 +523,11 @@ describe "RandomTownSpec", ->
 			hero: hero
 			heroFloorIndex: 0
 			heroLocation: [0, 0]
-			delegate: delegate
 
-		spyOn delegate, 'onHeroMove'
+		spyOn town, 'onHeroMove'
 		town.moveUp()
-		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "up"]
+		(expect town.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 0], "up"]
 
 		town.moveRight()
-		(expect delegate.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 1], "right"]
+		(expect town.onHeroMove.mostRecentCall.args).toEqual [[0, 0], [0, 1], "right"]
 

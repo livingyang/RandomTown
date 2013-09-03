@@ -7,7 +7,7 @@ grid = {ground: xxx, object: xxx}
 class RandomTown
 	constructor: (options) ->
 		options ?= {}
-		{@floors, @hero, @heroFloorIndex, @heroLocation, @delegate} = options
+		{@floors, @hero, @heroFloorIndex, @heroLocation} = options
 
 	getFloor: (floorIndex) ->
 		@floors[floorIndex]
@@ -28,7 +28,7 @@ class RandomTown
 
 	changeHeroProperty: (properties) ->
 		@hero[propertyName] += value for propertyName, value of properties when typeof @hero[propertyName] is "number" and typeof value is "number"
-		@delegate?.onHeroChanged?()
+		@onHeroChanged()
 
 	isValidRowAndCol: (row, col) ->
 		0 <= row < @getFloorRows() and 0 <= col < @getFloorCols()
@@ -60,7 +60,7 @@ class RandomTown
 			else
 				@heroLocation = [row, col] if grid.ground is RandomTown.Road
 
-		@delegate?.onHeroMove? oldLocation, @heroLocation, direction
+		@onHeroMove oldLocation, @heroLocation, direction
 
 	moveUp: ->
 		@moveHandle @heroLocation[0] - 1, @heroLocation[1], "up"
@@ -80,6 +80,15 @@ class RandomTown
 	getFloorCols: ->
 		@getFloor(0)?[0]?.length or 0
 
+	# delegate func
+	onFloorChanged: (oldFloorIndex, newFloorIndex) ->
+	onHeroMove: (oldLocation, newLocation, direction) ->
+	onHeroChanged: ->
+	onUsePlus: (plusLocation) ->
+	onPickupKey: (keyLocation) ->
+	onOpenDoor: (doorLocation) ->
+	onFightEnemy: (enemyLocation, heroFight, enemy) ->
+	
 RandomTown.Wall = -1
 RandomTown.Road = 0
 RandomTown.ObjectHandle = {}
@@ -262,7 +271,7 @@ RandomTown.ObjectHandle["hole"] =
 		else
 			oldFloorIndex = town.heroFloorIndex
 			town.heroFloorIndex = object.floorIndex
-			town.delegate?.onFloorChanged? oldFloorIndex, town.heroFloorIndex
+			town.onFloorChanged oldFloorIndex, town.heroFloorIndex
 		
 		town.heroLocation = object.location
 
@@ -282,7 +291,7 @@ RandomTown.ObjectHandle["plus"] =
 		else
 			object.isUsed = true
 			town.changeHeroProperty object
-			town.delegate?.onUsePlus? objectLocation
+			town.onUsePlus objectLocation
 
 	getSimpleData: (object, ground) ->
 		if object.isUsed is true then ground else object.type
@@ -302,8 +311,8 @@ RandomTown.ObjectHandle["key"] =
 			town.hero.key ?= {}
 			town.hero.key[object.color] ?= 0
 			++town.hero.key[object.color]
-			town.delegate?.onPickupKey? objectLocation
-			town.delegate?.onHeroChanged?()
+			town.onPickupKey objectLocation
+			town.onHeroChanged()
 
 	getSimpleData: (object, ground) ->
 		if object.isPickup is true then ground else object.type
@@ -322,8 +331,8 @@ RandomTown.ObjectHandle["door"] =
 			if town.hero.key?[object.color] > 0
 				object.isUnlock = true
 				--town.hero.key[object.color]
-				town.delegate?.onOpenDoor? objectLocation
-				town.delegate?.onHeroChanged?()
+				town.onOpenDoor objectLocation
+				town.onHeroChanged()
 
 	getSimpleData: (object, ground) ->
 		if object.isUnlock is true then ground else object.type
@@ -351,8 +360,8 @@ RandomTown.ObjectHandle["enemy"] =
 			object.health = heroFight.defenser.health
 			town.hero.exp += object.exp if object.exp?
 			town.hero.money += object.money if object.money?
-			town.delegate?.onHeroChanged?()
-			town.delegate?.onFightEnemy objectLocation, heroFight, object
+			town.onHeroChanged()
+			town.onFightEnemy objectLocation, heroFight, object
 
 	getSimpleData: (object, ground) ->
 		if object.health <= 0 then ground else object.type
