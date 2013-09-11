@@ -24,6 +24,7 @@ FightLayer = collie.Class
 		@arrowObject.set "x", 100
 		@arrowObject.set "y", 100
 
+		options.start?()
 		runTimeWork = (options) ->
 			collie.Timer.cycle (oEvent) ->
 				options.do oEvent.value
@@ -46,7 +47,14 @@ FightLayer = collie.Class
 				else
 					# oCurText.text healthList[index]
 					@arrowObject.arrowRight()
-			complete: => collie.Renderer.removeLayer this
+			complete: =>
+				collie.Renderer.removeLayer this
+				options.stop?()
+
+	onFightStart: ->
+		console.log "FightLayer#onFightStart"
+	onFightStop: ->
+		console.log "FightLayer#onFightStop"
 
 	createFightObjectDetails: (fightObject, x, y) ->
 		

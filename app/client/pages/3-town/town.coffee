@@ -85,6 +85,12 @@ class @TownController extends RouteController
 			@map.removeObject (@map.getObjects doorLocation[1], doorLocation[0])[0]
 		@randomTown.onFightEnemy = (enemyLocation, heroFight, enemy) =>
 			@map.removeObject (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
+			fightLayer = new FightLayer
+				width: 320
+				height: 320
+				start: -> Mousetrap.pause()
+				stop: -> Mousetrap.unpause()
+			.addTo()
 
 		Session.set "hero", @randomTown.hero
 		Session.set "floorInfo", "#{@randomTown.heroFloorIndex + 1}/#{@randomTown.floors.length}"
@@ -130,13 +136,13 @@ class @TownController extends RouteController
 		@resetMap()
 
 		# 绑定事件
-		Mousetrap.bind "up", =>
+		Mousetrap.bind ["up", "w"], =>
 			@randomTown.moveUp()
-		Mousetrap.bind "down", =>
+		Mousetrap.bind ["down", "s"], =>
 			@randomTown.moveDown()
-		Mousetrap.bind "left", =>
+		Mousetrap.bind ["left", "a"], =>
 			@randomTown.moveLeft()
-		Mousetrap.bind "right", =>
+		Mousetrap.bind ["right", "d"], =>
 			@randomTown.moveRight()
 		super
 
