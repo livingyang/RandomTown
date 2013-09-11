@@ -58,11 +58,11 @@ class @TownController extends RouteController
 				heroFloorIndex: 0
 				hero:
 					name: "SuperManXX"
-					attack: 100
-					defense: 80
+					attack: 20
+					defense: 10
 					health: 1000
 					exp: 0
-					money: 200
+					money: 0
 					key:
 						yellow: 1
 			saveRandomTown @randomTown
@@ -84,13 +84,18 @@ class @TownController extends RouteController
 		@randomTown.onOpenDoor = (doorLocation) =>
 			@map.removeObject (@map.getObjects doorLocation[1], doorLocation[0])[0]
 		@randomTown.onFightEnemy = (enemyLocation, heroFight, enemy) =>
-			@map.removeObject (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
+			enemyObject = (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
 			fightLayer = new FightLayer
-				width: 320
-				height: 320
+				width: @mapLayer.get "width"
+				height: @mapLayer.get "height"
 				start: -> Mousetrap.pause()
 				stop: -> Mousetrap.unpause()
+				heroFight: heroFight
+				heroObject: @heroObject.clone()
+				enemyObject: enemyObject.clone()
 			.addTo()
+			@map.removeObject enemyObject
+
 
 		Session.set "hero", @randomTown.hero
 		Session.set "floorInfo", "#{@randomTown.heroFloorIndex + 1}/#{@randomTown.floors.length}"
@@ -181,12 +186,12 @@ class @TownController extends RouteController
 		@map.addObject 0, 0, @heroObject
 		@moveHeroObject @heroObject, @randomTown.heroLocation, @map
 
-		@map.attach
-			mapclick: ->
-				new FightLayer
-					width: 320
-					height: 320
-				.addTo()
+		# @map.attach
+		# 	mapclick: ->
+		# 		new FightLayer
+		# 			width: @mapLayer.get "width"
+		# 			height: @mapLayer.get "height"
+		# 		.addTo()
 	moveHeroObject: (heroObject, heroLocation, map) ->
 		map.moveObject heroLocation[1], heroLocation[0], heroObject
 		heroObject.set

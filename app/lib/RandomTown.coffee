@@ -203,8 +203,8 @@ GenerateFloors = (floorCount, rows, cols, initLocation, wallPercent) ->
 						else grid.object.defense = 2
 					when "enemy"
 						grid.object.health = 100
-						grid.object.attack = 50
-						grid.object.defense = 30
+						grid.object.attack = 10 + Math.floor Math.random() * 6 * (floorIndex + 1)
+						grid.object.defense = 10 + Math.floor Math.random() * 6 * (floorIndex + 1)
 						grid.object.exp = 10
 						grid.object.money = 10
 
