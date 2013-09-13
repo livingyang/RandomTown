@@ -6,8 +6,9 @@ Template.home.rendered = ->
 Template.home.townLevel = ->
 	getTownLevel()
 
-Template.home.events "click #homeTest": ->
-	setTownLevel Math.floor Math.random() * 10
+Template.home.events "click #resetLevel": ->
+	setTownLevel 1
+	cleanRandomTown()
 
 class @HomeController extends RouteController
 	template: "home"

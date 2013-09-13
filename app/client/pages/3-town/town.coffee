@@ -45,6 +45,8 @@ loadRandomTown = ->
 
 cleanRandomTown = ->
 	Session.set "randomTown", null
+	
+@cleanRandomTown = cleanRandomTown
 
 class @TownController extends RouteController
 	template: "town"
