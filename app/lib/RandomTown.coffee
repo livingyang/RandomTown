@@ -88,7 +88,9 @@ class RandomTown
 	onPickupKey: (keyLocation) ->
 	onOpenDoor: (doorLocation) ->
 	onFightEnemy: (enemyLocation, heroFight, enemy) ->
-	
+	onEnterBeginHole: ->
+	onEnterEndHole: ->
+
 RandomTown.Wall = -1
 RandomTown.Road = 0
 RandomTown.ObjectHandle = {}
@@ -264,16 +266,16 @@ class HeroFight
 
 RandomTown.ObjectHandle["hole"] =
 	onEnter: (town, object, enterLocation, objectLocation) ->
+		town.heroLocation = object.location
+		
 		if object.floorIndex is -1
-			console.log "Town Start Point enter"
+			town.onEnterBeginHole()
 		else if object.floorIndex is town.floors.length
-			console.log "Town End Point enter"
+			town.onEnterEndHole()
 		else
 			oldFloorIndex = town.heroFloorIndex
 			town.heroFloorIndex = object.floorIndex
 			town.onFloorChanged oldFloorIndex, town.heroFloorIndex
-		
-		town.heroLocation = object.location
 
 	getSimpleData: (object, ground) ->
 		object.type

@@ -37,21 +37,21 @@ FightLayer = collie.Class
 				complete: -> options.complete()
 
 		# 加入头像
-		options.heroObject.set x: 0, y: 100
-		options.enemyObject.set x: 200, y: 100
+		options.heroObject.set x: 50, y: 100
+		options.enemyObject.set x: 250, y: 100
 		options.heroObject.addTo this
 		options.enemyObject.addTo this
 		healthList = options.heroFight.healthList #[80, 150, 40, 100, 20, 68, 0]
 		
 		oText = new collie.Text
-			x : 0
+			x : 50
 			y : 150
 			fontSize : 30
 			fontColor : "#000000"
 		.addTo(this).text options.heroFight.attacker.initHealth
 
 		oCurText = new collie.Text
-			x : 200
+			x : 250
 			y : 150
 			fontSize : 30
 			fontColor : "#000000"
@@ -59,28 +59,28 @@ FightLayer = collie.Class
 
 		# attack
 		oAAttack = new collie.Text
-			x : 0
+			x : 50
 			y : 200
 			fontSize : 18
 			fontColor : "#ff0000"
 		.addTo(this).text "attack:#{options.heroFight.attacker.attack}"
 
 		oDAttack = new collie.Text
-			x : 200
+			x : 250
 			y : 200
 			fontSize : 18
 			fontColor : "#ff0000"
 		.addTo(this).text "attack:#{options.heroFight.defenser.attack}"
 		# defense
 		oADefense = new collie.Text
-			x : 0
+			x : 50
 			y : 250
 			fontSize : 18
 			fontColor : "#0000ff"
 		.addTo(this).text "defense:#{options.heroFight.attacker.defense}"
 
 		oDDefense = new collie.Text
-			x : 200
+			x : 250
 			y : 250
 			fontSize : 18
 			fontColor : "#0000ff"

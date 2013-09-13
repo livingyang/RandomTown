@@ -89,24 +89,14 @@ describe "RandomTownSpec", ->
 		floors = []
 		floors.push [
 			[{ground: -1}, {ground: -1}, {ground: -1}]
-			[{ground: 0}, {ground: 0}, {ground: 0}]
+			[{ground: 0}, {ground: 0, object: {type: "hole", floorIndex: -1, location: [1, 1]}}, {ground: 0, object: {type: "hole", floorIndex: 1, location: [1, 2]}}]
 			[{ground: -1}, {ground: -1}, {ground: -1}]
 		]
 		floors.push [
 			[{ground: -1}, {ground: -1}, {ground: -1}]
-			[{ground: 0}, {ground: 0}, {ground: 0}]
+			[{ground: 0}, {ground: 0, object: {type: "hole", floorIndex: 2, location: [1, 1]}}, {ground: 0, object: {type: "hole", floorIndex: 0, location: [1, 1]}}]
 			[{ground: -1}, {ground: -1}, {ground: -1}]
 		]
-
-		floors[0][1][2].object = 
-			type: "hole"
-			floorIndex: 1
-			location: [1, 2]
-
-		floors[1][1][2].object = 
-			type: "hole"
-			floorIndex: 0
-			location: [1, 1]
 
 		town = new RandomTown
 			floors: floors
@@ -116,34 +106,43 @@ describe "RandomTownSpec", ->
 
 		spyOn town, "onHeroMove"
 		spyOn town, "onFloorChanged"
+		spyOn town, "onEnterBeginHole"
+		spyOn town, "onEnterEndHole"
 
-		(expect town.heroFloorIndex).toBe(0)
-		(expect town.heroLocation).toEqual([1, 0])
+		(expect town.heroFloorIndex).toBe 0
+		(expect town.heroLocation).toEqual [1, 0]
 
 		town.moveUp()
-		(expect town.heroLocation).toEqual([1, 0])
+		(expect town.heroLocation).toEqual [1, 0]
 		town.moveDown()
 		town.moveLeft()
-		(expect town.heroLocation).toEqual([1, 0])
-
+		(expect town.heroLocation).toEqual [1, 0]
+		(expect town.onEnterBeginHole.calls.length).toBe 0
+		
 		town.moveRight()
-		(expect town.heroFloorIndex).toBe(0)
-		(expect town.heroLocation).toEqual([1, 1])
+		(expect town.heroFloorIndex).toBe 0
+		(expect town.heroLocation).toEqual [1, 1]
+		(expect town.onEnterBeginHole.calls.length).toBe 1
 
 		town.moveRight()
 
 		(expect town.onHeroMove.mostRecentCall.args).toEqual [[1, 1], [1, 2], "right"]
 		(expect town.onFloorChanged.mostRecentCall.args).toEqual [0, 1]
-		(expect town.heroFloorIndex).toBe(1)
-		(expect town.heroLocation).toEqual([1, 2])
-
+		(expect town.onFloorChanged.calls.length).toBe 1
+		(expect town.heroFloorIndex).toBe 1
+		(expect town.heroLocation).toEqual [1, 2]
+		(expect town.onEnterEndHole.calls.length).toBe 0
+		
 		town.moveLeft()
-		(expect town.heroFloorIndex).toBe(1)
-		(expect town.heroLocation).toEqual([1, 1])
+		(expect town.heroFloorIndex).toBe 1
+		(expect town.heroLocation).toEqual [1, 1]
+		(expect town.onEnterEndHole.calls.length).toBe 1
 
 		town.moveRight()
-		(expect town.heroFloorIndex).toBe(0)
-		(expect town.heroLocation).toEqual([1, 1])
+		(expect town.onFloorChanged.mostRecentCall.args).toEqual [1, 0]
+		(expect town.onFloorChanged.calls.length).toBe 2
+		(expect town.heroFloorIndex).toBe 0
+		(expect town.heroLocation).toEqual [1, 1]
 
 	it "测试改变hero属性", ->
 		town = new RandomTown

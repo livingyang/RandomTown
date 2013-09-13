@@ -36,22 +36,27 @@ createRandomTown = (options) ->
 
 randomTownCache = null
 saveRandomTown = (randomTown) ->
-	randomTownCache = JSON.parse JSON.stringify randomTown
+	# randomTownCache = JSON.parse JSON.stringify randomTown
+	Session.set "randomTown", randomTown
 
 loadRandomTown = ->
-	randomTownCache
+	# randomTownCache
+	Session.get "randomTown"
+
+cleanRandomTown = ->
+	Session.set "randomTown", null
 
 class @TownController extends RouteController
 	template: "town"
 
-	run: ->
+	onAfterRun: ->
 		# 1 创建RandomTown
 		@randomTown = loadRandomTown()
 		if @randomTown?
 			@randomTown = new RandomTown @randomTown
 		else
 			@randomTown = createRandomTown
-				floorCount: 4
+				floorCount: getTownLevel()
 				rows: 11
 				cols: 11
 				initLocation: [0, 0]
@@ -95,6 +100,10 @@ class @TownController extends RouteController
 				enemyObject: enemyObject.clone()
 			.addTo()
 			@map.removeObject enemyObject
+		@randomTown.onEnterEndHole = =>
+			setTownLevel @randomTown.floors.length + 1
+			cleanRandomTown()
+			Router.go "home"
 
 
 		Session.set "hero", @randomTown.hero

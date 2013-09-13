@@ -1,12 +1,13 @@
 
-Template.home.events "click #homeTest" : ->
-	console.log "homeTest"
-	console.log IronRouter
-
 
 Template.home.rendered = ->
-	console.log "home rendered"
-	console.log document.getElementById "home-title"
+	console.log "Template.home.rendered"
+
+Template.home.townLevel = ->
+	getTownLevel()
+
+Template.home.events "click #homeTest": ->
+	setTownLevel Math.floor Math.random() * 10
 
 class @HomeController extends RouteController
 	template: "home"
@@ -31,12 +32,5 @@ class @HomeController extends RouteController
 		console.log "home render2"
 	rendered: ->
 		console.log "home rendered"
-		super
-
-	destory: ->
-		console.log "home destory"
-		super
-	destoried: ->
-		console.log "home destory"
 		super
 
