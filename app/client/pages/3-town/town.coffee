@@ -11,10 +11,10 @@ Template.town.events "click .mapControlButton": ->
 	Mousetrap.trigger @key
 
 Template.town.events "click #backToHome": ->
-	# backToHome()
+	Mousetrap.trigger "h"
 
 Template.town.mapControlButtons = ->
-	(key: key for key in ["up", "down", "left", "right", "h"])
+	(key: key for key in ["up", "down", "left", "right"])
 
 Template.hero.hero = ->
 	Session.get "hero"
@@ -29,50 +29,12 @@ stopCollie = ->
 		collie.Renderer.unload()
 		collie.Timer.removeAll()
 
-# createRandomTown = (options) ->
-# 	new RandomTown
-# 		floors: GenerateFloors options.floorCount, options.rows, options.cols, options.initLocation, (row, col) ->
-# 			if row % 2 is 0 and col % 2 is 0 then 0.5 else 0.8
-# 		hero: options.hero
-# 		heroFloorIndex: options.heroFloorIndex
-# 		heroLocation: options.initLocation
-
-# saveRandomTown = (randomTown) ->
-# 	Session.set "randomTown", randomTown
-
-# loadRandomTown = ->
-# 	Session.get "randomTown"
-
-# cleanRandomTown = ->
-# 	Session.set "randomTown", null
-
-# @cleanRandomTown = cleanRandomTown
-
 class @TownController extends RouteController
 	template: "town"
 
 	onAfterRun: ->
 		# 1 创建RandomTown
 		@randomTown = new RandomTown loadRandomTown()
-		# if @randomTown?
-		# 	@randomTown = new RandomTown @randomTown
-		# else
-		# 	@randomTown = createRandomTown
-		# 		floorCount: getTownLevel()
-		# 		rows: 11
-		# 		cols: 11
-		# 		initLocation: [0, 0]
-		# 		heroFloorIndex: 0
-		# 		hero:
-		# 			name: "SuperManXX"
-		# 			attack: 20
-		# 			defense: 10
-		# 			health: 1000
-		# 			exp: 0
-		# 			money: 0
-		# 			key:
-		# 				yellow: 1
-		# 	saveRandomTown @randomTown
 
 		# set delegate func
 		@randomTown.onFloorChanged = (oldFloorIndex, newFloorIndex) =>
@@ -83,7 +45,6 @@ class @TownController extends RouteController
 		@randomTown.onHeroMove = (oldLocation, newLocation, direction) =>
 			@moveHeroObject @heroObject, newLocation, @map
 		@randomTown.onHeroChanged = =>
-			# Session.set "hero", @randomTown.hero
 			saveHero @randomTown.hero
 		@randomTown.onUsePlus = (plusLocation) =>
 			@map.removeObject (@map.getObjects plusLocation[1], plusLocation[0])[0]
@@ -106,13 +67,8 @@ class @TownController extends RouteController
 		@randomTown.onEnterBeginHole = =>
 			backToHome @randomTown
 		@randomTown.onEnterEndHole = =>
-			# setTownLevel @randomTown.floors.length + 1
-			# cleanRandomTown()
-			# Router.go "home"
 			completeRandomTown @randomTown
 
-
-		# Session.set "hero", @randomTown.hero
 		Session.set "floorInfo", "#{@randomTown.heroFloorIndex + 1}/#{@randomTown.floors.length}"
 
 		collie.ImageManager.add "hero", "011-Braver01.png"
@@ -169,7 +125,6 @@ class @TownController extends RouteController
 		super
 
 	data: ->
-		# hero: Session.get "hero"
 		hero: loadHero()
 
 	createHeroObject: (hero) ->
