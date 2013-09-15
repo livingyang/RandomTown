@@ -243,7 +243,7 @@ class HeroFight
 
 		@attacker = JSON.parse(JSON.stringify(options.attacker ? {}))
 		@defenser = JSON.parse(JSON.stringify(options.defenser ? {}))
-		@maxTurnCount = options.maxTurnCount ? 100
+		@maxTurnCount = options.maxTurnCount ? HeroFight.DefaultTownCount
 		@healthList = []
 		@attacker.initHealth = @attacker.health
 		@defenser.initHealth = @defenser.health
@@ -257,6 +257,14 @@ class HeroFight
 			defenser.health -= damage if damage > 0
 			@healthList.push defenser.health
 			break if defenser.health <= 0
+	isWin: ->
+		@attacker.health > 0 and @defenser.health <= 0
+	isLose: ->
+		@attacker.health <= 0 and @defenser.health > 0
+	isDraw: ->
+		not @isWin() and not @isLose()
+
+HeroFight.DefaultTownCount = 20
 
 @HeroFight = HeroFight
 

@@ -339,6 +339,7 @@ describe "RandomTownSpec", ->
 			defenser: defenser
 			maxTurnCount: 100
 
+		(expect HeroFight.DefaultTownCount).toBe 20
 		(expect heroFight.maxTurnCount).toBe 100
 		(expect heroFight.attacker.attack).toBe 100
 		(expect heroFight.attacker.defense).toBe 80
@@ -353,6 +354,27 @@ describe "RandomTownSpec", ->
 		(expect heroFight.healthList).toEqual [10, 100, -20]
 		(expect attacker.health).toBe 120
 		(expect defenser.health).toBe 40
+
+		(expect heroFight.isWin()).toBe true
+		(expect heroFight.isLose()).toBe false
+		(expect heroFight.isDraw()).toBe false
+
+		drawHeroFight = new HeroFight
+			attacker: attacker
+			defenser:
+				attack: attacker.defense
+				defense: attacker.attack
+				health: attacker.health 
+		(expect drawHeroFight.isDraw()).toBe true
+
+		loseHeroFight = new HeroFight
+			attacker: attacker
+			defenser:
+				attack: attacker.attack * 10
+				defense: attacker.defense * 10
+				health: attacker.health 
+		(expect loseHeroFight.isLose()).toBe true
+
 
 	it "测试敌人", ->
 		floors = []
