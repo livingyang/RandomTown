@@ -33,8 +33,8 @@ isIntoRandomTown = ->
 	isRandomTownExist()
 
 getDefaultHero = ->
-	attack: 10
-	defense: 10
+	attack: 1
+	defense: 122
 	health: 100
 	exp: 0
 	money: 0
@@ -65,6 +65,11 @@ completeRandomTown = (randomTown) ->
 
 @completeRandomTown = completeRandomTown
 
+deadInRandomTown =  ->
+	saveRandomTown null
+	Router.go "home"
+
+@deadInRandomTown = deadInRandomTown
 # home template
 
 Template.home.rendered = ->
@@ -85,6 +90,7 @@ Template.home.events "click #startRandomTown": ->
 	else
 		randomTown = createRandomTown()
 		saveRandomTown randomTown
+		saveHero randomTown.hero
 
 	Router.go "town"
 

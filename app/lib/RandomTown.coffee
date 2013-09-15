@@ -364,7 +364,6 @@ RandomTown.ObjectHandle["enemy"] =
 			heroFight = new HeroFight
 				attacker: town.hero
 				defenser: object
-				maxTurnCount: 100
 
 			town.hero.health = heroFight.attacker.health
 			object.health = heroFight.defenser.health

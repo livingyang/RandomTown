@@ -58,12 +58,15 @@ class @TownController extends RouteController
 				width: @mapLayer.get "width"
 				height: @mapLayer.get "height"
 				start: -> Mousetrap.pause()
-				stop: -> Mousetrap.unpause()
+				stop: ->
+					Mousetrap.unpause()
+					if heroFight.isLose()
+						deadInRandomTown()
 				heroFight: heroFight
 				heroObject: @heroObject.clone()
 				enemyObject: enemyObject.clone()
 			.addTo()
-			@map.removeObject enemyObject
+			@map.removeObject enemyObject if heroFight.isWin()
 		@randomTown.onEnterBeginHole = =>
 			backToHome @randomTown
 		@randomTown.onEnterEndHole = =>
