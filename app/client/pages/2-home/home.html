@@ -4,10 +4,41 @@
 </template>
 
 <template name="home">
-	<h3 id="home-title">HOME - 点击town，进入魔塔</h3>
+	<h3 id="home-title">HOME</h3>
 	<p>当前的魔塔等级： {{townLevel}}</p>
+
+	{{#if isIntoRandomTown}}
+	<div class="btn-group">
+		<a class="btn dropdown-toggle" data-toggle="dropdown">
+			商店
+			<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">
+			<li>
+				<a id="coinToAttack">5金币 = 2攻击</a>
+			</li>
+			<li>
+				<a id="coinToDefense">5金币 = 2防御</a>
+			</li>
+		</ul>
+	</div>
+	<div class="btn-group">
+		<a class="btn dropdown-toggle" data-toggle="dropdown">
+			训练所
+			<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">
+			<li>
+				<a id="expToAttack">5经验 = 2攻击</a>
+			</li>
+			<li>
+				<a id="expToDefense">5经验 = 2防御</a>
+			</li>
+		</ul>
+	</div>
+	{{> hero}}
+	{{/if}}
 	<a href="{{pathFor 'login'}}">login</a>
-	<!-- <a href="{{pathFor 'town'}}">Town</a> -->
 	<button id="resetLevel">重置等级</button>
 	<button id="startRandomTown">开始游戏</button>
 </template>

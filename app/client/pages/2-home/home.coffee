@@ -33,8 +33,8 @@ isIntoRandomTown = ->
 	isRandomTownExist()
 
 getDefaultHero = ->
-	attack: 1
-	defense: 122
+	attack: 15
+	defense: 10
 	health: 100
 	exp: 0
 	money: 0
@@ -78,6 +78,9 @@ Template.home.rendered = ->
 Template.home.townLevel = ->
 	getTownLevel()
 
+Template.home.isIntoRandomTown = ->
+	isIntoRandomTown()
+
 Template.home.events "click #resetLevel": ->
 	setTownLevel 1
 	cleanRandomTown()
@@ -94,7 +97,31 @@ Template.home.events "click #startRandomTown": ->
 
 	Router.go "town"
 
-
+Template.home.events "click #coinToAttack": ->
+	hero = loadHero()
+	if hero.money > 5
+		hero.money -= 5
+		hero.attack += 2
+		saveHero hero
+Template.home.events "click #coinToDefense": ->
+	hero = loadHero()
+	if hero.money > 5
+		hero.money -= 5
+		hero.defense += 2
+		saveHero hero
+Template.home.events "click #expToAttack": ->
+	hero = loadHero()
+	if hero.exp > 5
+		hero.exp -= 5
+		hero.attack += 2
+		saveHero hero
+Template.home.events "click #expToDefense": ->
+	hero = loadHero()
+	if hero.exp > 5
+		hero.exp -= 5
+		hero.defense += 2
+		saveHero hero
+	
 
 class @HomeController extends RouteController
 	template: "home"
