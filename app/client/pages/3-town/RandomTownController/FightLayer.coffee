@@ -86,6 +86,13 @@ FightLayer = collie.Class
 			fontColor : "#0000ff"
 		.addTo(this).text "defense:#{options.heroFight.defenser.defense}"
 
+		oTurnCount = new collie.Text
+			x : 200
+			y : 300
+			fontSize : 18
+			fontColor : "#ffffff"
+		.addTo(this).text options.heroFight.healthList.length
+
 		runTimeWork
 			delay: 300
 			count: healthList.length
@@ -98,6 +105,7 @@ FightLayer = collie.Class
 					collie.Timer.delay (-> oCurText.text healthList[index]), 300
 					# oCurText.text healthList[index]
 					@arrowObject.arrowRight()
+				oTurnCount.text healthList.length - index
 			complete: =>
 				collie.Renderer.removeLayer this
 				options.stop?()
