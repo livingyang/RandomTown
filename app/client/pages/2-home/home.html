@@ -4,9 +4,8 @@
 </template>
 
 <template name="home">
-	<h3 id="home-title">HOME</h3>
+	<h3 id="home-title" class="text-center">随机塔</h3>
 	<p>当前的魔塔等级： {{townLevel}}</p>
-
 	{{#if isIntoRandomTown}}
 	<div class="btn-group">
 		<a class="btn dropdown-toggle" data-toggle="dropdown">
@@ -38,7 +37,15 @@
 	</div>
 	{{> hero}}
 	{{/if}}
-	<a href="{{pathFor 'login'}}">login</a>
-	<button id="resetLevel">重置等级</button>
-	<button id="startRandomTown">开始游戏</button>
+	<!-- <a href="{{pathFor 'login'}}">login</a> -->
+	<div class="row-fluid navbar navbar-fixed-bottom">
+		<div class="span4 offset4">
+			<button id="startRandomTown" class="btn-block btn-large btn-info">开始游戏</button>
+			<div class="row-fluid">
+				<div class="span4 offset4">
+					<button id="resetLevel" class="btn-block btn-large btn-danger">重置等级</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>

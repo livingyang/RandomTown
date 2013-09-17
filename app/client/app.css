@@ -13,4 +13,11 @@ body {
 
 .container {
 	height: 100%;
+	background-color: #eee;
+	background-image: linear-gradient(335deg, #ec8 23px, transparent 23px),
+	linear-gradient(155deg, #ed8 23px, transparent 23px),
+	linear-gradient(335deg, #ec8 23px, transparent 23px),
+	linear-gradient(155deg, #ed8 23px, transparent 23px);
+	background-size: 58px 58px;	
+	background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
 }
