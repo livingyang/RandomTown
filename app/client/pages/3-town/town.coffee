@@ -37,8 +37,9 @@ class @TownController extends RouteController
 		if not isRandomTownExist()
 			Router.go "home"
 			return
-		@randomTown = new RandomTown loadRandomTown()
-
+		options = loadRandomTown()
+		options.hero = loadHero()
+		@randomTown = new RandomTown options
 		
 		# set delegate func
 		@randomTown.onFloorChanged = (oldFloorIndex, newFloorIndex) =>
@@ -58,19 +59,27 @@ class @TownController extends RouteController
 			@map.removeObject (@map.getObjects doorLocation[1], doorLocation[0])[0]
 		@randomTown.onFightEnemy = (enemyLocation, heroFight, enemy) =>
 			enemyObject = (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
+			curFightTurn = 0
 			fightLayer = new FightLayer
 				width: @mapLayer.get "width"
 				height: @mapLayer.get "height"
 				start: -> Mousetrap.pause()
+				step: -> ++curFightTurn
 				stop: ->
 					Mousetrap.unpause()
-					if heroFight.isLose()
-						deadInRandomTown()
+					heroFight.enableFight curFightTurn
+					# if heroFight.isLose()
+						# deadInRandomTown()
 				heroFight: heroFight
 				heroObject: @heroObject.clone()
 				enemyObject: enemyObject.clone()
 			.addTo()
-			@map.removeObject enemyObject if heroFight.isWin()
+			# @map.removeObject enemyObject if heroFight.isWin()
+		@randomTown.onHeroDead = =>
+			deadInRandomTown()
+		@randomTown.onEnemyDead = (enemyLocation, enemy) =>
+			enemyObject = (@map.getObjects enemyLocation[1], enemyLocation[0])[0]
+			@map.removeObject enemyObject
 		@randomTown.onEnterBeginHole = =>
 			backToHome @randomTown
 		@randomTown.onEnterEndHole = =>

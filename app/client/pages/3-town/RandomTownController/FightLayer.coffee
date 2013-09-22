@@ -106,6 +106,7 @@ FightLayer = collie.Class
 					# oCurText.text healthList[index]
 					@arrowObject.arrowRight()
 				oTurnCount.text healthList.length - index
+				options.step?()
 			complete: =>
 				collie.Renderer.removeLayer this
 				options.stop?()

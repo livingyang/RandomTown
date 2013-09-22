@@ -55,6 +55,12 @@ loadHero = ->
 
 @loadHero = loadHero
 
+cancelToHome = ->
+	saveRandomTown null
+	Router.go "home"
+
+@cancelToHome = cancelToHome
+
 backToHome = (randomTown) ->
 	saveRandomTown randomTown
 	saveHero randomTown.hero

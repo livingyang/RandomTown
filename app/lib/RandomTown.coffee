@@ -88,6 +88,8 @@ class RandomTown
 	onPickupKey: (keyLocation) ->
 	onOpenDoor: (doorLocation) ->
 	onFightEnemy: (enemyLocation, heroFight, enemy) ->
+	onEnemyDead: (enemyLocation, enemy) ->
+	onHeroDead: (town) ->
 	onEnterBeginHole: ->
 	onEnterEndHole: ->
 
@@ -264,6 +266,25 @@ class HeroFight
 	isDraw: ->
 		not @isWin() and not @isLose()
 
+	getAttackerHealth: (turnIndex) ->
+		if not turnIndex?
+			return 0
+
+		if 0 < turnIndex <= @healthList.length - 1
+			if turnIndex % 2 is 0 then @healthList[turnIndex - 1] else @healthList[turnIndex]
+		else
+			@attacker.initHealth
+
+	getDefenserHealth: (turnIndex) ->
+		if not turnIndex?
+			return 0
+		
+		if 0 <= turnIndex < @healthList.length - 1
+			if turnIndex % 2 is 0 then @healthList[turnIndex] else @healthList[turnIndex - 1]
+		else
+			@defenser.health
+
+
 HeroFight.DefaultTownCount = 20
 
 @HeroFight = HeroFight
@@ -365,11 +386,22 @@ RandomTown.ObjectHandle["enemy"] =
 				attacker: town.hero
 				defenser: object
 
-			town.hero.health = heroFight.attacker.health
-			object.health = heroFight.defenser.health
-			town.hero.exp += object.exp if object.exp?
-			town.hero.money += object.money if object.money?
-			town.onHeroChanged()
+			heroFight.enableFight = (turnIndex) ->
+				if 0 < turnIndex < heroFight.healthList.length - 1
+					turnIndex = turnIndex + 1 if turnIndex % 2 is 0
+				else
+					turnIndex = heroFight.healthList.length - 1
+
+				town.hero.health = heroFight.getAttackerHealth turnIndex
+				object.health = heroFight.getDefenserHealth turnIndex
+				town.onHeroChanged()
+				town.onHeroDead() if town.hero.health <= 0
+
+				if object.health <= 0
+					town.hero.exp += object.exp if object.exp?
+					town.hero.money += object.money if object.money?
+					town.onEnemyDead objectLocation, object
+
 			town.onFightEnemy objectLocation, heroFight, object
 
 	getSimpleData: (object, ground) ->

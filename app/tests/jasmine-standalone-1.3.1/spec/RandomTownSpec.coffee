@@ -355,6 +355,16 @@ describe "RandomTownSpec", ->
 		(expect attacker.health).toBe 120
 		(expect defenser.health).toBe 40
 
+		(expect heroFight.getAttackerHealth 0).toBe 120
+		(expect heroFight.getAttackerHealth 1).toBe 100
+		(expect heroFight.getAttackerHealth 2).toBe 100
+		(expect heroFight.getAttackerHealth()).toBe 0
+
+		(expect heroFight.getDefenserHealth 0).toBe 10
+		(expect heroFight.getDefenserHealth 1).toBe 10
+		(expect heroFight.getDefenserHealth 2).toBe -20
+		(expect heroFight.getDefenserHealth()).toBe 0
+
 		(expect heroFight.isWin()).toBe true
 		(expect heroFight.isLose()).toBe false
 		(expect heroFight.isDraw()).toBe false
@@ -375,17 +385,16 @@ describe "RandomTownSpec", ->
 				health: attacker.health 
 		(expect loseHeroFight.isLose()).toBe true
 
-
 	it "测试敌人", ->
 		floors = []
 		floors.push [
 			[{ground: 0}, {ground: 0}]
 			[{ground: 0}, {ground: 0}]
 		]
-		floors[0][0][1].object =
+		floors[0][0][1].object = enemy =
 			type: "enemy"
 			attack: 100
-			defense: 10
+			defense: 60
 			health: 100
 			exp: 10
 			money: 10
@@ -399,22 +408,85 @@ describe "RandomTownSpec", ->
 		spyOn town, "onHeroMove"
 		spyOn town, "onHeroChanged"
 		spyOn town, "onFightEnemy"
+		spyOn town, "onEnemyDead"
 
-		(expect town.getEnemyDamage 0, 1).toEqual 20
+		(expect town.getEnemyDamage 0, 1).toEqual 40
 
 		(expect town.hero.exp).toBe 0
 		(expect town.hero.money).toBe 200
 		town.moveRight()
-		(expect town.onHeroChanged.calls.length).toBe 1
 		(expect town.onFightEnemy.calls.length).toBe 1
 		(expect town.onFightEnemy.mostRecentCall.args[0]).toEqual [0, 1]
-		(expect town.onFightEnemy.mostRecentCall.args[1]).toEqual jasmine.any(HeroFight)
 		(expect town.onFightEnemy.mostRecentCall.args[2].type).toEqual "enemy"
+		(expect town.hero.exp).toBe 0
+		(expect town.hero.money).toBe 200
+
+		heroFight = town.onFightEnemy.mostRecentCall.args[1]
+		(expect heroFight).toEqual jasmine.any(HeroFight)
+		(expect heroFight.healthList.length).toBe 5
+		
+		# 无效的参数都相当于 enableFight heroFight.healthList.length - 1
+		heroFight.enableFight 1
+		
+		(expect town.onHeroChanged.calls.length).toBe 1
+		(expect town.hero.exp).toBe 0
+		(expect town.hero.money).toBe 200
+		(expect enemy.health).toBe 60
+
+		heroFight.enableFight 3
+		(expect town.onHeroChanged.calls.length).toBe 2
+		(expect enemy.health).toBe 20
+
+		(expect town.onEnemyDead.calls.length).toBe 0
+		heroFight.enableFight()
+		(expect town.onHeroChanged.calls.length).toBe 3
+		(expect town.onEnemyDead.mostRecentCall.args[0]).toEqual [0, 1]
+		(expect town.onEnemyDead.calls.length).toBe 1
+		(expect enemy.health <= 0).toBe true
 		(expect town.hero.exp).toBe 10
 		(expect town.hero.money).toBe 210
+		
 		(expect town.heroLocation).toEqual([0, 0])
 		town.moveRight()
 		(expect town.heroLocation).toEqual([0, 1])
+	
+	it "测试玩家失败", ->
+		floors = []
+		floors.push [
+			[{ground: 0}, {ground: 0}]
+			[{ground: 0}, {ground: 0}]
+		]
+		floors[0][0][1].object =
+			type: "enemy"
+			attack: hero.attack * 10
+			defense: hero.defense * 10
+			health: hero.health * 10
+			exp: 10
+			money: 10
+
+		town = new RandomTown
+			floors: floors
+			hero: hero
+			heroFloorIndex: 0
+			heroLocation: [0, 0]
+
+		spyOn town, "onFightEnemy"
+		spyOn town, "onHeroChanged"
+		spyOn town, "onHeroDead"
+
+		(expect (town.getEnemyDamage 0, 1) >= hero.health).toBe true
+
+		town.moveRight()
+
+		heroFight = town.onFightEnemy.mostRecentCall.args[1]
+
+		(expect town.onHeroDead.calls.length).toBe 0
+		(expect town.onHeroChanged.calls.length).toBe 0
+		heroFight.enableFight()
+		(expect town.onHeroDead.calls.length).toBe 1
+		(expect town.onHeroChanged.calls.length).toBe 1
+
+		(expect town.hero.health <= 0).toBe true
 	
 	it "随机生成路径", ->
 		(expect GeneratePath 1, 4, [0, 0]
