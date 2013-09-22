@@ -1,0 +1,66 @@
+<!-- store 作用
+	入口：魔塔界面
+	出口1：魔塔界面
+	出口2：主界面
+
+	主要操作有：
+	* 返回主界面
+	* 返回魔塔界面
+	* 查看英雄信息
+	* 查看当前魔塔信息
+	* 购买道具增强英雄实力
+	* 购买钥匙
+	* 消耗经验进行升级
+	* 充值获得强大力量
+ -->
+
+ <!-- store 主要界面元素
+ 	* 返回主界面按钮
+ 	* 进入魔塔按钮
+ 	* 英雄信息面板
+ 	* 魔塔信息面板
+ 	* 道具商店
+ 	* 钥匙商店
+ 	* 经验商店
+ 	* 充值按钮
+ -->
+
+<template name="store">
+	<h3>商店</h3>
+	{{#if isIntoRandomTown}}
+		<div class="btn-group">
+			<a class="btn dropdown-toggle" data-toggle="dropdown">
+				商店
+				<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li>
+					<a id="coinToAttack">5金币 = 2攻击</a>
+				</li>
+				<li>
+					<a id="coinToDefense">5金币 = 2防御</a>
+				</li>
+			</ul>
+		</div>
+		<div class="btn-group">
+			<a class="btn dropdown-toggle" data-toggle="dropdown">
+				训练所
+				<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li>
+					<a id="expToAttack">5经验 = 2攻击</a>
+				</li>
+				<li>
+					<a id="expToDefense">5经验 = 2防御</a>
+				</li>
+			</ul>
+		</div>
+		{{> hero}}
+		{{else}}
+		{{> defaultHero}}
+		{{/if}}
+
+	<a href="{{pathFor 'home'}}" class="btn btn-danger">退出这次探索</a>
+	<a href="{{pathFor 'town'}}" class="btn btn-info btn-lg">继续探索</a>
+</template>

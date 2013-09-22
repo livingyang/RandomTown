@@ -1,18 +1,32 @@
 <template name="town">
+	<div class="well">
+		<div class="row">
+			<div class="col-xs-6">
+				{{#constant}}
+				<div id="fight"></div>
+				{{/constant}}
 
-	{{#constant}}
-	<div id="fight"></div>
-	{{/constant}}
+				{{#each mapControlButtons}}
+					{{> mapControlButton}}
+				{{/each}}
 
-	{{#each mapControlButtons}}
-		{{> mapControlButton}}
-	{{/each}}
+				<button id="backToHome">回城</button>
+			</div>
+			<div class="col-xs-6">
+				<div class="panel panel-info">
 
-	<button id="backToHome">回城</button>
-	
-	{{> hero}}
+					<div class="panel-heading">
+						<p>当前信息</p>
+					</div>
+					<div class="panel-body">
+						{{> hero}}
 
-	<p>楼层: {{floorInfo}}</p>
+						<p>楼层: {{floorInfo}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </template>
 
@@ -21,6 +35,7 @@
 </template>
 
 <template name="hero">
+	<img src="hero.png"/>
 	<p>生命: {{hero.health}}</p>
 	<p>攻击: {{hero.attack}}</p>
 	<p>防御: {{hero.defense}}</p>

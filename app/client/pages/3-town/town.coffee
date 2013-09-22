@@ -34,8 +34,12 @@ class @TownController extends RouteController
 
 	onAfterRun: ->
 		# 1 创建RandomTown
+		if not isRandomTownExist()
+			Router.go "home"
+			return
 		@randomTown = new RandomTown loadRandomTown()
 
+		
 		# set delegate func
 		@randomTown.onFloorChanged = (oldFloorIndex, newFloorIndex) =>
 			@resetMap()

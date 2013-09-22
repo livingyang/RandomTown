@@ -1,51 +1,64 @@
+<!-- home 作用
+	入口：登陆界面
+	出口：魔塔界面
 
-<template name="backHome">
-	<a href="{{pathFor 'home'}}">Home</a>
-</template>
+	主要操作有：
+	* 返回登陆界面
+	* 进入魔塔界面
+	* 查看英雄信息
+	* 查看当前魔塔信息
+ -->
+
+ <!-- home 主要界面元素
+ 	* 重新登陆按钮
+ 	* 进入魔塔按钮
+ 	* 英雄信息面板
+ 	* 魔塔信息面板
+ -->
 
 <template name="home">
-	<h3 id="home-title" class="text-center">随机塔</h3>
-	<p>当前的魔塔等级： {{townLevel}}</p>
-	{{#if isIntoRandomTown}}
-	<div class="btn-group">
-		<a class="btn dropdown-toggle" data-toggle="dropdown">
-			商店
-			<span class="caret"></span>
-		</a>
-		<ul class="dropdown-menu">
-			<li>
-				<a id="coinToAttack">5金币 = 2攻击</a>
-			</li>
-			<li>
-				<a id="coinToDefense">5金币 = 2防御</a>
-			</li>
-		</ul>
-	</div>
-	<div class="btn-group">
-		<a class="btn dropdown-toggle" data-toggle="dropdown">
-			训练所
-			<span class="caret"></span>
-		</a>
-		<ul class="dropdown-menu">
-			<li>
-				<a id="expToAttack">5经验 = 2攻击</a>
-			</li>
-			<li>
-				<a id="expToDefense">5经验 = 2防御</a>
-			</li>
-		</ul>
-	</div>
-	{{> hero}}
-	{{/if}}
-	<!-- <a href="{{pathFor 'login'}}">login</a> -->
-	<div class="row-fluid navbar navbar-fixed-bottom">
-		<div class="span4 offset4">
-			<button id="startRandomTown" class="btn-block btn-large btn-info">开始游戏</button>
-			<div class="row-fluid">
-				<div class="span4 offset4">
-					<button id="resetLevel" class="btn-block btn-large btn-danger">重置等级</button>
+	
+	<header>
+	</header>
+
+	<div class="container well">
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<p>英雄信息</p>
+					</div>
+					<div class="panel-body">
+						{{> defaultHero}}
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">魔塔信息</h3>
+					</div>
+					<div class="panel-body">
+						<p>当前的魔塔等级： {{townLevel}}</p>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<footer class="container well text-center">
+		<a id="resetLevel" class="btn btn-danger">重置等级</a>
+		<a id="startRandomTown" class="btn btn-lg btn-info">开始游戏</a>
+		<a href="{{pathFor 'login'}}" class="btn btn-danger">重新登陆</a>
+	</footer>
+</template>
+
+<template name="defaultHero">
+	<div class="container">
+		<img src="hero.png"/>
+		<p>生命: {{hero.health}}</p>
+		<p>攻击: {{hero.attack}}</p>
+		<p>防御: {{hero.defense}}</p>
+	</div>
+	
 </template>

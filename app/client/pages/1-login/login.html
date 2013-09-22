@@ -1,14 +1,26 @@
 
 <template name="login">
 
-<div class="entry">
-	<h3>LOGIN</h3>
+<div class="well text-center">
+	<div class="game-detail">
+		<h1>随机塔</h1>
+		<p>在那遥远的地方</p>
+		<p>有一座神秘的魔塔</p>
+		<p>徘徊着魔物</p>
+		<p>隐藏着宝藏</p>
+		<p>传说</p>
+		<p>谁能到达最高处</p>
+		<p>将寻到永生的秘密...</p>
+		<br/>
+	</div>
 
-	{{#if currentUser}}
-		{{> backHome}}
-		<input id="btnLogout" class=" btn btn-danger" type="button" value="Logout"></input>
+	<a href="{{pathFor 'home'}}" class="btn btn-success btn-lg">进入游戏</a>
+
+	<!-- {{#if currentUser}}
+		<a id="btnLogout" class="btn btn-danger">注销账户</a>
+		<a href="{{pathFor 'home'}}" class="btn btn-success">进入游戏</a>
 	{{else}}
 		{{loginButtons}}
-	{{/if}}
+	{{/if}} -->
 </div>
 </template>

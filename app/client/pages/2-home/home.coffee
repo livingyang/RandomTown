@@ -19,6 +19,8 @@ cleanRandomTown = ->
 isRandomTownExist = ->
 	(Session.get "randomTown")?
 
+@isRandomTownExist = isRandomTownExist
+
 createRandomTown = ->
 	new RandomTown
 		floors: GenerateFloors getTownLevel(), 11, 11, [0, 0], (row, col) ->
@@ -31,6 +33,8 @@ createRandomTown = ->
 # 玩家是否在探索中
 isIntoRandomTown = ->
 	isRandomTownExist()
+
+@isIntoRandomTown = isIntoRandomTown
 
 getDefaultHero = ->
 	attack: 15
@@ -54,7 +58,7 @@ loadHero = ->
 backToHome = (randomTown) ->
 	saveRandomTown randomTown
 	saveHero randomTown.hero
-	Router.go "home"
+	Router.go "store"
 
 @backToHome = backToHome
 
@@ -78,8 +82,8 @@ Template.home.rendered = ->
 Template.home.townLevel = ->
 	getTownLevel()
 
-Template.home.isIntoRandomTown = ->
-	isIntoRandomTown()
+Template.defaultHero.hero = ->
+	getDefaultHero()
 
 Template.home.events "click #resetLevel": ->
 	setTownLevel 1
@@ -96,32 +100,6 @@ Template.home.events "click #startRandomTown": ->
 		saveHero randomTown.hero
 
 	Router.go "town"
-
-Template.home.events "click #coinToAttack": ->
-	hero = loadHero()
-	if hero.money > 5
-		hero.money -= 5
-		hero.attack += 2
-		saveHero hero
-Template.home.events "click #coinToDefense": ->
-	hero = loadHero()
-	if hero.money > 5
-		hero.money -= 5
-		hero.defense += 2
-		saveHero hero
-Template.home.events "click #expToAttack": ->
-	hero = loadHero()
-	if hero.exp > 5
-		hero.exp -= 5
-		hero.attack += 2
-		saveHero hero
-Template.home.events "click #expToDefense": ->
-	hero = loadHero()
-	if hero.exp > 5
-		hero.exp -= 5
-		hero.defense += 2
-		saveHero hero
-	
 
 class @HomeController extends RouteController
 	template: "home"
