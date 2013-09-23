@@ -7,20 +7,36 @@ Template.town.destroyed = ->
 	Mousetrap.reset()
 	stopCollie()
 
-Template.town.events "click .mapControlButton": ->
-	Mousetrap.trigger @key
-
 Template.town.events "click #backToHome": ->
 	Mousetrap.trigger "h"
-
-Template.town.mapControlButtons = ->
-	(key: key for key in ["up", "down", "left", "right"])
 
 Template.hero.hero = ->
 	Session.get "hero"
 
 Template.town.floorInfo = ->
 	Session.get "floorInfo"
+
+joystickEventHandle = (eleEvents, handle) ->
+	angle = Math.atan2 eleEvents.offsetY - eleEvents.toElement.clientHeight / 2, eleEvents.offsetX - eleEvents.toElement.clientWidth / 2
+	area = Math.floor (angle + Math.PI) / Math.PI * 4
+	flag = 
+		7: "left"
+		0: "left"
+		1: "up"
+		2: "up"
+		3: "right"
+		4: "right"
+		5: "down"
+		6: "down"
+
+	handle?[flag[area]]?()
+
+Template.town.events "click #joystick": (events) ->
+	joystickEventHandle events,
+		"up": -> Mousetrap.trigger "up"
+		"down": -> Mousetrap.trigger "down"
+		"left": -> Mousetrap.trigger "left"
+		"right": -> Mousetrap.trigger "right"
 
 stopCollie = ->
 	if collie.Renderer.isPlaying()
@@ -33,10 +49,12 @@ class @TownController extends RouteController
 	template: "town"
 
 	onAfterRun: ->
-		# 1 创建RandomTown
+
 		if not isRandomTownExist()
 			Router.go "home"
-			return
+			return super
+
+		# 1 创建RandomTown
 		options = loadRandomTown()
 		options.hero = loadHero()
 		@randomTown = new RandomTown options
@@ -128,6 +146,7 @@ class @TownController extends RouteController
 		@resetMap()
 
 		# 绑定事件
+		Mousetrap.unpause()
 		Mousetrap.bind ["up", "w"], =>
 			@randomTown.moveUp()
 		Mousetrap.bind ["down", "s"], =>

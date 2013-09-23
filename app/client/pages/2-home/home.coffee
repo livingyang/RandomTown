@@ -40,8 +40,8 @@ getDefaultHero = ->
 	attack: 15
 	defense: 10
 	health: 100
-	exp: 0
-	money: 0
+	exp: 10
+	money: 10
 	key:
 		yellow: 1
 

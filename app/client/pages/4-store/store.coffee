@@ -29,3 +29,14 @@ Template.store.events "click #expToDefense": ->
 		hero.defense += 2
 		saveHero hero
 	
+
+class @StoreController extends RouteController
+	template: "store"
+
+	onAfterRun: ->
+		# 1 创建RandomTown
+		if not isRandomTownExist()
+			Router.go "home"
+			return
+
+		super

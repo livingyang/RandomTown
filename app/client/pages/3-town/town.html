@@ -5,12 +5,6 @@
 				{{#constant}}
 				<div id="fight"></div>
 				{{/constant}}
-
-				{{#each mapControlButtons}}
-					{{> mapControlButton}}
-				{{/each}}
-
-				<button id="backToHome">回城</button>
 			</div>
 			<div class="col-xs-6">
 				<div class="panel panel-info">
@@ -19,19 +13,18 @@
 						<p>当前信息</p>
 					</div>
 					<div class="panel-body">
+						<img id="joystick" src="cross.png"/>
+						<br/>
 						{{> hero}}
 
 						<p>楼层: {{floorInfo}}</p>
+						<a id="backToHome" class="btn btn-success">回城</a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-</template>
-
-<template name="mapControlButton">
-	<button id="{{key}}" class="mapControlButton">{{key}}</button>
 </template>
 
 <template name="hero">

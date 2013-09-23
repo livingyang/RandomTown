@@ -26,41 +26,65 @@
  -->
 
 <template name="store">
-	<h3>商店</h3>
-	{{#if isIntoRandomTown}}
-		<div class="btn-group">
-			<a class="btn dropdown-toggle" data-toggle="dropdown">
-				商店
-				<span class="caret"></span>
-			</a>
-			<ul class="dropdown-menu">
-				<li>
-					<a id="coinToAttack">5金币 = 2攻击</a>
-				</li>
-				<li>
-					<a id="coinToDefense">5金币 = 2防御</a>
-				</li>
-			</ul>
-		</div>
-		<div class="btn-group">
-			<a class="btn dropdown-toggle" data-toggle="dropdown">
-				训练所
-				<span class="caret"></span>
-			</a>
-			<ul class="dropdown-menu">
-				<li>
-					<a id="expToAttack">5经验 = 2攻击</a>
-				</li>
-				<li>
-					<a id="expToDefense">5经验 = 2防御</a>
-				</li>
-			</ul>
-		</div>
-		{{> hero}}
-		{{else}}
-		{{> defaultHero}}
-		{{/if}}
+	<div class="well">
+		<div class="row">
+			<div class="col-xs-6">
+				<div class="panel panel-info">
 
-	<a id="cancelToHome" class="btn btn-danger">退出这次探索</a>
-	<a href="{{pathFor 'town'}}" class="btn btn-info btn-lg">继续探索</a>
+					<div class="panel-heading">
+						<p>商店</p>
+					</div>
+					<div class="panel-body">
+						<div class="btn-group">
+							<a class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown">
+								商店
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a id="coinToAttack">5金币 = 2攻击</a>
+								</li>
+								<li>
+									<a id="coinToDefense">5金币 = 2防御</a>
+								</li>
+							</ul>
+						</div>
+						<div class="btn-group">
+							<a class="btn btn-primary btn-lg dropdown-toggle" data-toggle="dropdown">
+								训练所
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a id="expToAttack">5经验 = 2攻击</a>
+								</li>
+								<li>
+									<a id="expToDefense">5经验 = 2防御</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+  					<div class="panel-footer">
+						<a id="cancelToHome" class="btn btn-danger btn-block">退出这次探索</a>
+						<a href="{{pathFor 'town'}}" class="btn btn-info btn-lg btn-block">继续探索</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-6">
+
+				<div class="panel panel-info">
+
+					<div class="panel-heading">
+						<p>英雄信息</p>
+					</div>
+					<div class="panel-body">
+						{{> hero}}
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
 </template>

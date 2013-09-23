@@ -35,6 +35,7 @@ FightLayer = collie.Class
 				loop: 1
 			.attach
 				complete: -> options.complete()
+				stop: -> options.complete()
 
 		# 加入头像
 		options.heroObject.set x: 50, y: 100
@@ -93,7 +94,7 @@ FightLayer = collie.Class
 			fontColor : "#ffffff"
 		.addTo(this).text options.heroFight.healthList.length
 
-		runTimeWork
+		runTimer = runTimeWork
 			delay: 300
 			count: healthList.length
 			do: (index) =>
@@ -110,6 +111,18 @@ FightLayer = collie.Class
 			complete: =>
 				collie.Renderer.removeLayer this
 				options.stop?()
+
+		new collie.Text
+			x: 180
+			y: 320
+			fontSize: 18
+			fontColor: "#000000"
+			backgroundColor: "#aaaaaa"
+			opacity: 0.9
+		.addTo(this)
+		.text("逃跑")
+		.attach "click": ->
+			runTimer.stop()
 
 	onFightStart: ->
 		console.log "FightLayer#onFightStart"
