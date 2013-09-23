@@ -97,7 +97,7 @@ FightLayer = collie.Class
 			delay: 300
 			count: healthList.length
 			do: (index) =>
-				console.log "health = #{healthList[index]}"
+				# console.log "health = #{healthList[index]}"
 				if index % 2 is 1
 					collie.Timer.delay (-> oText.text healthList[index]), 300
 					@arrowObject.arrowLeft()

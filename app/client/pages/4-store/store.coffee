@@ -1,6 +1,8 @@
-
 Template.store.isIntoRandomTown = ->
 	isIntoRandomTown()
+
+Template.store.events "click #cancelToHome": ->
+	cancelToHome()
 
 Template.store.events "click #coinToAttack": ->
 	hero = loadHero()
